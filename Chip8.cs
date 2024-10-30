@@ -64,6 +64,17 @@ namespace Chip8Emulator
             set { simTick = value; }
         }
 
+        public uint KeyDown
+        {
+            set { keypad!.@byte![value] = 1; }
+        }
+
+        public uint KeyUp
+        {
+            set { keypad!.@byte![value] = 0; }
+        }
+
+
         private bool step = true;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -116,37 +127,6 @@ namespace Chip8Emulator
 	        0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
 	        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
         };
-
-        public List<string> DebugStackInfo()
-        {
-            List<string> stak = new();
-            stak.Add("STACK");
-            for (uint i = 0; i < 15; i++)
-                stak.Add(STACK[i].ToString("X"));
-            return stak;
-        }
-
-        public List<string> DebugMainInfo()
-        {
-            List<string> info = new();
-
-            info.Add("V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 VA VB VC VD VE VF");
-            string reg = "";
-            for (uint i = 0; i < 16; i++)
-            {
-                if (registers!.@byte![i] < 16) reg += "0";
-                reg += registers!.@byte![i].ToString("X");
-                if (i < 15) reg += " ";
-            }
-            info.Add(reg);
-            info.Add("OPCODE = " + CurrentOpcodeDescription);
-            info.Add("PC = " + PC / 2);
-            info.Add("DT = " + DT.ToString("X"));
-            info.Add("ST = " + ST.ToString("X"));
-            info.Add("SP = " + SP.ToString("X"));
-            info.Add("I = " + I.ToString("X"));
-            return info;
-        }
 
         public Chip8()
         {
@@ -544,22 +524,6 @@ namespace Chip8Emulator
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X");
         }
 
-        public uint KeyDown
-        {
-            set
-            {
-                keypad!.@byte![value] = 1;
-            }
-        }
-
-        public uint KeyUp
-        {
-            set
-            {
-                keypad!.@byte![value] = 0;
-            }
-        }
-
         private void OP_Fx15(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
@@ -663,6 +627,37 @@ namespace Chip8Emulator
             if (opHex[0] == 'F' && opHex[2] == '5' && opHex[3] == '5') { OP_Fx55(opcode); return; }
             if (opHex[0] == 'F' && opHex[2] == '6' && opHex[3] == '5') { OP_Fx65(opcode); return; }
             throw new Exception("Invalid Opcode");
+        }
+
+        public List<string> DebugStackInfo()
+        {
+            List<string> stak = new();
+            stak.Add("STACK");
+            for (uint i = 0; i < 15; i++)
+                stak.Add(STACK[i].ToString("X"));
+            return stak;
+        }
+
+        public List<string> DebugMainInfo()
+        {
+            List<string> info = new();
+
+            info.Add("V0 V1 V2 V3 V4 V5 V6 V7 V8 V9 VA VB VC VD VE VF");
+            string reg = "";
+            for (uint i = 0; i < 16; i++)
+            {
+                if (registers!.@byte![i] < 16) reg += "0";
+                reg += registers!.@byte![i].ToString("X");
+                if (i < 15) reg += " ";
+            }
+            info.Add(reg);
+            info.Add("OPCODE = " + CurrentOpcodeDescription);
+            info.Add("PC = " + PC / 2);
+            info.Add("DT = " + DT.ToString("X"));
+            info.Add("ST = " + ST.ToString("X"));
+            info.Add("SP = " + SP.ToString("X"));
+            info.Add("I = " + I.ToString("X"));
+            return info;
         }
     }
 }
