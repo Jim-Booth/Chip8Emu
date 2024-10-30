@@ -41,7 +41,6 @@ namespace Chip8Emu
             Color c = Color.White;
             if (!down)
                 c = Color.Silver;
-            /*
             switch (k)
             {
                 case 0:
@@ -107,7 +106,7 @@ namespace Chip8Emu
                 case 15:
                     label14.BackColor = c;
                     break;
-            }*/
+            }
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)

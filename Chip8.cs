@@ -506,7 +506,7 @@ namespace Chip8Emulator
         private void OP_Ex9E(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint key = registers!.@byte![Vx];
+            uint key = (byte)(registers!.@byte![Vx] & 0x0F);
             if (keypad!.@byte![key] == 1)
                 PC += 2;
             CurrentOpcodeDescription += " -  SKP   V" + Vx.ToString("X");
@@ -515,7 +515,7 @@ namespace Chip8Emulator
         private void OP_ExA1(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint key = registers!.@byte![Vx];
+            uint key = (byte)(registers!.@byte![Vx] & 0x0F);
             if (keypad!.@byte![key] == 0)
                 PC += 2;
             CurrentOpcodeDescription += " -  SKP   V" + Vx.ToString("X");

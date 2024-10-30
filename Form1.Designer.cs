@@ -49,9 +49,27 @@
             label2 = new Label();
             label3 = new Label();
             openFileDialog = new OpenFileDialog();
+            label6 = new Label();
+            label7 = new Label();
+            label8 = new Label();
+            label9 = new Label();
+            label10 = new Label();
+            label11 = new Label();
+            label12 = new Label();
+            label13 = new Label();
+            label14 = new Label();
+            label15 = new Label();
+            label16 = new Label();
+            label17 = new Label();
+            label18 = new Label();
+            label19 = new Label();
+            label20 = new Label();
+            label21 = new Label();
+            panel2 = new Panel();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
+            panel2.SuspendLayout();
             SuspendLayout();
             // 
             // pictureBox1
@@ -268,11 +286,197 @@
             // 
             openFileDialog.FileName = "openFileDialog";
             // 
+            // label6
+            // 
+            label6.BackColor = Color.Silver;
+            label6.Location = new Point(2, 2);
+            label6.Name = "label6";
+            label6.Size = new Size(30, 30);
+            label6.TabIndex = 22;
+            label6.Text = "1/1";
+            label6.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label7
+            // 
+            label7.BackColor = Color.Silver;
+            label7.Location = new Point(34, 2);
+            label7.Name = "label7";
+            label7.Size = new Size(30, 30);
+            label7.TabIndex = 23;
+            label7.Text = "2/2";
+            label7.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label8
+            // 
+            label8.BackColor = Color.Silver;
+            label8.Location = new Point(66, 2);
+            label8.Name = "label8";
+            label8.Size = new Size(30, 30);
+            label8.TabIndex = 24;
+            label8.Text = "3/3";
+            label8.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label9
+            // 
+            label9.BackColor = Color.Silver;
+            label9.Location = new Point(98, 2);
+            label9.Name = "label9";
+            label9.Size = new Size(30, 30);
+            label9.TabIndex = 25;
+            label9.Text = "4/C";
+            label9.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label10
+            // 
+            label10.BackColor = Color.Silver;
+            label10.Location = new Point(98, 34);
+            label10.Name = "label10";
+            label10.Size = new Size(30, 30);
+            label10.TabIndex = 29;
+            label10.Text = "R/D";
+            label10.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label11
+            // 
+            label11.BackColor = Color.Silver;
+            label11.Location = new Point(66, 34);
+            label11.Name = "label11";
+            label11.Size = new Size(30, 30);
+            label11.TabIndex = 28;
+            label11.Text = "E/6";
+            label11.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label12
+            // 
+            label12.BackColor = Color.Silver;
+            label12.Location = new Point(34, 34);
+            label12.Name = "label12";
+            label12.Size = new Size(30, 30);
+            label12.TabIndex = 27;
+            label12.Text = "W/5";
+            label12.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label13
+            // 
+            label13.BackColor = Color.Silver;
+            label13.Location = new Point(2, 34);
+            label13.Name = "label13";
+            label13.Size = new Size(30, 30);
+            label13.TabIndex = 26;
+            label13.Text = "Q/4";
+            label13.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label14
+            // 
+            label14.BackColor = Color.Silver;
+            label14.Location = new Point(98, 98);
+            label14.Name = "label14";
+            label14.Size = new Size(30, 30);
+            label14.TabIndex = 33;
+            label14.Text = "V/F";
+            label14.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label15
+            // 
+            label15.BackColor = Color.Silver;
+            label15.Location = new Point(66, 98);
+            label15.Name = "label15";
+            label15.Size = new Size(30, 30);
+            label15.TabIndex = 32;
+            label15.Text = "C/B";
+            label15.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label16
+            // 
+            label16.BackColor = Color.Silver;
+            label16.Location = new Point(34, 98);
+            label16.Name = "label16";
+            label16.Size = new Size(30, 30);
+            label16.TabIndex = 31;
+            label16.Text = "X/0";
+            label16.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label17
+            // 
+            label17.BackColor = Color.Silver;
+            label17.Location = new Point(2, 98);
+            label17.Name = "label17";
+            label17.Size = new Size(30, 30);
+            label17.TabIndex = 30;
+            label17.Text = "Z/A";
+            label17.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label18
+            // 
+            label18.BackColor = Color.Silver;
+            label18.Location = new Point(98, 66);
+            label18.Name = "label18";
+            label18.Size = new Size(30, 30);
+            label18.TabIndex = 37;
+            label18.Text = "F/E";
+            label18.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label19
+            // 
+            label19.BackColor = Color.Silver;
+            label19.Location = new Point(66, 66);
+            label19.Name = "label19";
+            label19.Size = new Size(30, 30);
+            label19.TabIndex = 36;
+            label19.Text = "D/9";
+            label19.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label20
+            // 
+            label20.BackColor = Color.Silver;
+            label20.Location = new Point(34, 66);
+            label20.Name = "label20";
+            label20.Size = new Size(30, 30);
+            label20.TabIndex = 35;
+            label20.Text = "S/8";
+            label20.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // label21
+            // 
+            label21.BackColor = Color.Silver;
+            label21.Location = new Point(2, 66);
+            label21.Name = "label21";
+            label21.Size = new Size(30, 30);
+            label21.TabIndex = 34;
+            label21.Text = "A/7";
+            label21.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // panel2
+            // 
+            panel2.BackColor = Color.Black;
+            panel2.BorderStyle = BorderStyle.FixedSingle;
+            panel2.Controls.Add(label6);
+            panel2.Controls.Add(label18);
+            panel2.Controls.Add(label7);
+            panel2.Controls.Add(label19);
+            panel2.Controls.Add(label8);
+            panel2.Controls.Add(label20);
+            panel2.Controls.Add(label9);
+            panel2.Controls.Add(label21);
+            panel2.Controls.Add(label13);
+            panel2.Controls.Add(label14);
+            panel2.Controls.Add(label17);
+            panel2.Controls.Add(label15);
+            panel2.Controls.Add(label12);
+            panel2.Controls.Add(label10);
+            panel2.Controls.Add(label16);
+            panel2.Controls.Add(label11);
+            panel2.Location = new Point(661, 173);
+            panel2.Name = "panel2";
+            panel2.Size = new Size(132, 132);
+            panel2.TabIndex = 38;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1056, 336);
+            Controls.Add(panel2);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(button5);
@@ -303,6 +507,7 @@
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
+            panel2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -330,5 +535,22 @@
         private Label label2;
         private Label label3;
         private OpenFileDialog openFileDialog;
+        private Label label6;
+        private Label label7;
+        private Label label8;
+        private Label label9;
+        private Label label10;
+        private Label label11;
+        private Label label12;
+        private Label label13;
+        private Label label14;
+        private Label label15;
+        private Label label16;
+        private Label label17;
+        private Label label18;
+        private Label label19;
+        private Label label20;
+        private Label label21;
+        private Panel panel2;
     }
 }
