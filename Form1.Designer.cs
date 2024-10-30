@@ -255,32 +255,36 @@
             // 
             // trackBar1
             // 
-            trackBar1.Location = new Point(830, 275);
+            trackBar1.Location = new Point(812, 275);
             trackBar1.Maximum = 40000;
+            trackBar1.Minimum = 20000;
             trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(187, 45);
+            trackBar1.Size = new Size(240, 45);
             trackBar1.TabIndex = 17;
-            trackBar1.TickFrequency = 1000;
+            trackBar1.TickFrequency = 1001;
+            trackBar1.TickStyle = TickStyle.None;
             trackBar1.Value = 20000;
             trackBar1.ValueChanged += trackBar1_ValueChanged;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(797, 282);
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(816, 296);
             label2.Name = "label2";
-            label2.Size = new Size(41, 15);
+            label2.Size = new Size(45, 15);
             label2.TabIndex = 18;
-            label2.Text = "slower";
+            label2.Text = "normal";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(1010, 284);
+            label3.Location = new Point(1013, 296);
             label3.Name = "label3";
             label3.Size = new Size(36, 15);
             label3.TabIndex = 19;
             label3.Text = "faster";
+            label3.Click += label3_Click;
             // 
             // openFileDialog
             // 

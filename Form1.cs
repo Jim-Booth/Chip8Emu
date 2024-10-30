@@ -220,7 +220,7 @@ namespace Chip8Emu
                     chip8.Stop();
                     chip8_thread = null;
                 }
-                while (chip8_thread!.IsAlive)
+                while (chip8_thread is not null && chip8_thread!.IsAlive)
                     chip8_thread = null;
             }
             panel1.BackColor = Color.Red;
@@ -376,6 +376,11 @@ namespace Chip8Emu
                 comboBox1_SelectedIndexChanged(this, e);
             else
                 Form1_Shown(sender, e);
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
