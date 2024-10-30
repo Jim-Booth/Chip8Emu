@@ -276,7 +276,7 @@ namespace Chip8Emu
         private void RenderScreen()
         {
             displayRendering = true;
-            Bitmap initalBitmap = new Bitmap(64, 32);
+            Bitmap initalBitmap = new(64, 32);
             video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
             video.@byte = chip8!.Video.@byte;
             int cnt = 0;
@@ -292,8 +292,8 @@ namespace Chip8Emu
                     cnt++;
                 }
             }
-            Rectangle outputContainerRect = new Rectangle(0, 0, 640, 320);
-            Bitmap outputBitmap = new Bitmap(640, 320);
+            Rectangle outputContainerRect = new(0, 0, 640, 320);
+            Bitmap outputBitmap = new(640, 320);
             outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
             using (Graphics graphics = Graphics.FromImage(outputBitmap))
             {
@@ -302,7 +302,7 @@ namespace Chip8Emu
                 graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
                 graphics.SmoothingMode = SmoothingMode.HighQuality;
                 graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (ImageAttributes wrapMode = new ImageAttributes())
+                using (ImageAttributes wrapMode = new())
                 {
                     wrapMode.SetWrapMode(WrapMode.TileFlipXY);
                     graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
@@ -380,7 +380,6 @@ namespace Chip8Emu
 
         private void label3_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

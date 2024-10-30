@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace Chip8Emulator
 {
     internal class Chip8
     {
         private bool running = false;
+
         public bool Running
         {
             get { return running; }
@@ -17,6 +14,7 @@ namespace Chip8Emulator
         }
 
         private bool debugMode = false;
+
         public bool DebugMode
         {
             get { return debugMode; }
@@ -24,6 +22,7 @@ namespace Chip8Emulator
         }
 
         private bool shiftQuirk = false;
+
         public bool ShiftQuirk
         {
             get { return shiftQuirk; }
@@ -31,6 +30,7 @@ namespace Chip8Emulator
         }
 
         private bool jumpQuirk = false;
+
         public bool JumpQuirk
         {
             get { return jumpQuirk; }
@@ -38,6 +38,7 @@ namespace Chip8Emulator
         }
 
         private bool vFReset = false;
+
         public bool VFReset
         {
             get { return vFReset; }
@@ -45,6 +46,7 @@ namespace Chip8Emulator
         }
 
         private bool memoryQuirk = false;
+
         public bool MemoryQuirk
         {
             get { return memoryQuirk; }
@@ -52,12 +54,14 @@ namespace Chip8Emulator
         }
 
         private bool displayAvailable = true;
+
         public bool DisplayAvailable
         {
             get { return displayAvailable; }
         }
 
         private int simTick = 20000;
+
         public int SimTick
         {
             get { return simTick; }
@@ -66,14 +70,13 @@ namespace Chip8Emulator
 
         public uint KeyDown
         {
-            set { keypad!.@byte![value] = 1; }
+            set { Keypad!.@byte![value] = 1; }
         }
 
         public uint KeyUp
         {
-            set { keypad!.@byte![value] = 0; }
+            set { Keypad!.@byte![value] = 0; }
         }
-
 
         private bool step = true;
 
@@ -85,6 +88,7 @@ namespace Chip8Emulator
         }
 
         private FIXED_BYTE_ARRAY video;
+
         public FIXED_BYTE_ARRAY Video
         {
             get { return video; }
@@ -92,8 +96,8 @@ namespace Chip8Emulator
         }
 
         private Random RND = new(DateTime.Now.Millisecond);
-        private FIXED_BYTE_ARRAY? registers { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
-        private FIXED_BYTE_ARRAY? memory { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[4095] };
+        private FIXED_BYTE_ARRAY? Registers { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
+        private FIXED_BYTE_ARRAY? Memory { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[4095] };
         private uint I;
         private uint PC;
         private string CurrentOpcodeDescription = String.Empty;
@@ -101,13 +105,14 @@ namespace Chip8Emulator
         private byte SP = 0;// stack pointer
         private byte ST = 0;// sound timer
         private byte DT = 0;// delay timer
-        private FIXED_BYTE_ARRAY keypad { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
+        private FIXED_BYTE_ARRAY Keypad { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
         private const uint START_ADDRESS = 0x200;
         private const int FONTSET_SIZE = 80;
         private const uint FONTSET_START_ADDRESS = 0x50;
         private const uint VIDEO_WIDTH = 64;
         private const uint VIDEO_HEIGHT = 32;
-        private bool playingSound;
+        private bool PlayingSound;
+
         private byte[] FONTS { get; } = new byte[FONTSET_SIZE]
         {
             0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -133,7 +138,7 @@ namespace Chip8Emulator
             PC = START_ADDRESS;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[VIDEO_WIDTH * VIDEO_HEIGHT] };
             for (uint i = 0; i < FONTSET_SIZE; i++)
-                memory!.@byte![i] = FONTS[i];
+                Memory!.@byte![i] = FONTS[i];
         }
 
         public void LoadROM(string filePath)
@@ -143,9 +148,9 @@ namespace Chip8Emulator
                 BinaryReader br = new(fs);
                 long progSize = new FileInfo(filePath).Length;
                 byte[] rom = br.ReadBytes((int)progSize);
-                if (rom.Length <= memory!.@byte!.Length)
+                if (rom.Length <= Memory!.@byte!.Length)
                     for (long i = 0; i < rom.Length; i++)
-                        memory!.@byte![START_ADDRESS + i] = rom[i];
+                        Memory!.@byte![START_ADDRESS + i] = rom[i];
                 else
                     throw new Exception("Memory Overflow");
             }
@@ -159,14 +164,14 @@ namespace Chip8Emulator
             while (running)
             {
                 var watch = Stopwatch.StartNew();
-                uint opcode = ((uint)memory!.@byte![PC] << 8) | memory!.@byte![PC + 1];
+                uint opcode = ((uint)Memory!.@byte![PC] << 8) | Memory!.@byte![PC + 1];
                 uint p = PC;
 
                 // Cycle the CPU
                 if (!debugMode)
                     CPUCycle(opcode);
                 else
-                { 
+                {
                     while (!step) { }
                     CPUCycle(opcode);
                 }
@@ -232,7 +237,7 @@ namespace Chip8Emulator
                 DT--;
             if (ST > 0)
             {
-                if (!playingSound)
+                if (!PlayingSound)
                     Beep(ST);
                 ST--;
             }
@@ -242,9 +247,9 @@ namespace Chip8Emulator
         {
             Task.Run(() =>
             {
-                playingSound = true;
+                PlayingSound = true;
                 Sound.PlaySound(500, (int)(st * (1000f / 60)));
-                playingSound = false;
+                PlayingSound = false;
             });
         }
 
@@ -282,7 +287,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint b = opcode & (uint)0x00FF;
-            if (registers!.@byte![Vx] == b)
+            if (Registers!.@byte![Vx] == b)
                 PC += 2;
             CurrentOpcodeDescription += " -  SNI   V" + Vx.ToString("X") + ", #" + b.ToString("X");
         }
@@ -291,7 +296,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint b = opcode & (uint)0x00FF;
-            if (registers!.@byte![Vx] != b)
+            if (Registers!.@byte![Vx] != b)
                 PC += 2;
             CurrentOpcodeDescription += " -  SNI   V" + Vx.ToString("X") + ", #" + b.ToString("X");
         }
@@ -300,7 +305,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            if (registers!.@byte![Vx] == registers!.@byte![Vy])
+            if (Registers!.@byte![Vx] == Registers!.@byte![Vy])
                 PC += 2;
             CurrentOpcodeDescription += " -  SNI   V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
@@ -309,7 +314,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint b = opcode & (uint)0x00FF;
-            registers!.@byte![Vx] = (byte)b;
+            Registers!.@byte![Vx] = (byte)b;
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X") + ", #" + b.ToString("X");
         }
 
@@ -317,7 +322,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint b = opcode & (uint)0x00FF;
-            registers!.@byte![Vx] = (byte)((registers!.@byte![Vx] + (byte)b) & 0xFF);
+            Registers!.@byte![Vx] = (byte)((Registers!.@byte![Vx] + (byte)b) & 0xFF);
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X") + ", #" + b.ToString("X");
         }
 
@@ -325,7 +330,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            registers!.@byte![Vx] = registers!.@byte![Vy];
+            Registers!.@byte![Vx] = Registers!.@byte![Vy];
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
 
@@ -333,9 +338,9 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            registers!.@byte![Vx] |= registers!.@byte![Vy];
+            Registers!.@byte![Vx] |= Registers!.@byte![Vy];
             if (vFReset)
-                registers!.@byte![15] = 0;
+                Registers!.@byte![15] = 0;
             CurrentOpcodeDescription += " -  OR    V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
 
@@ -343,9 +348,9 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            registers!.@byte![Vx] &= registers!.@byte![Vy];
+            Registers!.@byte![Vx] &= Registers!.@byte![Vy];
             if (vFReset)
-                registers!.@byte![15] = 0;
+                Registers!.@byte![15] = 0;
             CurrentOpcodeDescription += " -  AND   V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
 
@@ -353,9 +358,9 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            registers!.@byte![Vx] ^= registers!.@byte![Vy];
+            Registers!.@byte![Vx] ^= Registers!.@byte![Vy];
             if (vFReset)
-                registers!.@byte![15] = 0;
+                Registers!.@byte![15] = 0;
             CurrentOpcodeDescription += " -  XOR   V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
 
@@ -364,10 +369,10 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
             uint carry = 0;
-            if (registers!.@byte![Vy] > (0xFF - registers!.@byte![Vx]))
+            if (Registers!.@byte![Vy] > (0xFF - Registers!.@byte![Vx]))
                 carry = 1;
-            registers!.@byte![Vx] += registers!.@byte![Vy];
-            registers!.@byte![15] = (byte)carry;
+            Registers!.@byte![Vx] += Registers!.@byte![Vy];
+            Registers!.@byte![15] = (byte)carry;
             CurrentOpcodeDescription += " -  ADD   V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", VF";
         }
 
@@ -376,10 +381,10 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
             uint carry = 0;
-            if (registers!.@byte![Vx] >= registers!.@byte![Vy])
+            if (Registers!.@byte![Vx] >= Registers!.@byte![Vy])
                 carry = 1;
-            registers!.@byte![Vx] -= registers!.@byte![Vy];
-            registers!.@byte![15] = (byte)carry;
+            Registers!.@byte![Vx] -= Registers!.@byte![Vy];
+            Registers!.@byte![15] = (byte)carry;
             CurrentOpcodeDescription += " -  SUB   V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", VF";
         }
 
@@ -387,12 +392,12 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            uint vx = registers!.@byte![Vx];
-            registers!.@byte![Vx] = registers!.@byte![Vy];
+            uint vx = Registers!.@byte![Vx];
+            Registers!.@byte![Vx] = Registers!.@byte![Vy];
             if (shiftQuirk)
-                registers!.@byte![Vx] = (byte)vx;
-            registers!.@byte![Vx] >>= (byte)0x1;
-            registers!.@byte![15] = (byte)(vx & 0x1);
+                Registers!.@byte![Vx] = (byte)vx;
+            Registers!.@byte![Vx] >>= (byte)0x1;
+            Registers!.@byte![15] = (byte)(vx & 0x1);
             CurrentOpcodeDescription += " -  SHR   V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", VF";
         }
 
@@ -400,12 +405,12 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            uint sum = (uint)(registers!.@byte![Vy] - registers!.@byte![Vx]);
+            uint sum = (uint)(Registers!.@byte![Vy] - Registers!.@byte![Vx]);
             uint carry = 0;
-            if (registers!.@byte![Vy] >= registers!.@byte![Vx])
+            if (Registers!.@byte![Vy] >= Registers!.@byte![Vx])
                 carry = 1;
-            registers!.@byte![Vx] = (byte)(registers!.@byte![Vy] - registers!.@byte![Vx]);
-            registers!.@byte![15] = (byte)carry;
+            Registers!.@byte![Vx] = (byte)(Registers!.@byte![Vy] - Registers!.@byte![Vx]);
+            Registers!.@byte![15] = (byte)carry;
             CurrentOpcodeDescription += " -  SUBN  V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", VF";
         }
 
@@ -413,12 +418,12 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            uint vx = registers!.@byte![Vx];
-            registers!.@byte![Vx] = registers!.@byte![Vy];
+            uint vx = Registers!.@byte![Vx];
+            Registers!.@byte![Vx] = Registers!.@byte![Vy];
             if (shiftQuirk)
-                registers!.@byte![Vx] = (byte)vx;
-            registers!.@byte![Vx] <<= (byte)0x1;
-            registers!.@byte![15] = (byte)((vx & 0x80) >> 7);
+                Registers!.@byte![Vx] = (byte)vx;
+            Registers!.@byte![Vx] <<= (byte)0x1;
+            Registers!.@byte![15] = (byte)((vx & 0x80) >> 7);
             CurrentOpcodeDescription += " -  SHL   V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", VF";
         }
 
@@ -426,7 +431,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint Vy = (opcode & (uint)0x00F0) >> 4;
-            if (registers!.@byte![Vx] != registers!.@byte![Vy])
+            if (Registers!.@byte![Vx] != Registers!.@byte![Vy])
                 PC += 2;
             CurrentOpcodeDescription += " -  SHR   V" + Vx.ToString("X") + ", V" + Vy.ToString("X");
         }
@@ -443,9 +448,9 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint address = (uint)(opcode & (uint)0x0FFF);
             if (!jumpQuirk)
-                PC = address + registers!.@byte![0];
+                PC = address + Registers!.@byte![0];
             else
-                PC = address + registers!.@byte![Vx];
+                PC = address + Registers!.@byte![Vx];
             CurrentOpcodeDescription += " -  JMP   #" + PC.ToString("X");
         }
 
@@ -454,8 +459,8 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint b = (opcode & (uint)0x00FF);
             int r = new Random(DateTime.Now.Millisecond).Next(0, 255);
-            registers!.@byte![Vx] = (byte)(r & b);
-            CurrentOpcodeDescription += " -  RND   V" + Vx.ToString("X") + ", #" + registers!.@byte![Vx].ToString("X");
+            Registers!.@byte![Vx] = (byte)(r & b);
+            CurrentOpcodeDescription += " -  RND   V" + Vx.ToString("X") + ", #" + Registers!.@byte![Vx].ToString("X");
         }
 
         private void OP_Dxyn(uint opcode)
@@ -463,19 +468,19 @@ namespace Chip8Emulator
             int Vx = (int)((opcode & (uint)0x0F00) >> 8);
             int Vy = (int)((opcode & (uint)0x00F0) >> 4);
             uint height = (uint)(opcode & (uint)0x000F);
-            uint xPos = registers!.@byte![Vx] % VIDEO_WIDTH;
-            uint yPos = registers!.@byte![Vy] % VIDEO_HEIGHT;
-            registers!.@byte![15] = 0;
+            uint xPos = Registers!.@byte![Vx] % VIDEO_WIDTH;
+            uint yPos = Registers!.@byte![Vy] % VIDEO_HEIGHT;
+            Registers!.@byte![15] = 0;
             for (uint row = 0; row < height; row++)
             {
-                uint spriteByte = memory!.@byte![I + row];
+                uint spriteByte = Memory!.@byte![I + row];
                 for (uint col = 0; col < 8; col++)
                 {
                     uint vp = (yPos + row) % VIDEO_HEIGHT * VIDEO_WIDTH + (xPos + col) % VIDEO_WIDTH;
                     if ((spriteByte & ((int)0x80 >> (int)col)) != 0)
                     {
                         if (vp != 0 && video!.@byte![vp] == 1)
-                            registers!.@byte![15] = 1;
+                            Registers!.@byte![15] = 1;
                         video!.@byte![vp] ^= 1;
                     }
                 }
@@ -486,8 +491,8 @@ namespace Chip8Emulator
         private void OP_Ex9E(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint key = (byte)(registers!.@byte![Vx] & 0x0F);
-            if (keypad!.@byte![key] == 1)
+            uint key = (byte)(Registers!.@byte![Vx] & 0x0F);
+            if (Keypad!.@byte![key] == 1)
                 PC += 2;
             CurrentOpcodeDescription += " -  SKP   V" + Vx.ToString("X");
         }
@@ -495,8 +500,8 @@ namespace Chip8Emulator
         private void OP_ExA1(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint key = (byte)(registers!.@byte![Vx] & 0x0F);
-            if (keypad!.@byte![key] == 0)
+            uint key = (byte)(Registers!.@byte![Vx] & 0x0F);
+            if (Keypad!.@byte![key] == 0)
                 PC += 2;
             CurrentOpcodeDescription += " -  SKP   V" + Vx.ToString("X");
         }
@@ -504,7 +509,7 @@ namespace Chip8Emulator
         private void OP_Fx07(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            registers!.@byte![Vx] = DT;
+            Registers!.@byte![Vx] = DT;
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X") + ", DT" + DT;
         }
 
@@ -513,9 +518,9 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             bool hit = false;
             for (uint i = 0; i < 15; i++)
-                if (keypad!.@byte![i] != 0)
+                if (Keypad!.@byte![i] != 0)
                 {
-                    registers!.@byte![Vx] = (byte)i;
+                    Registers!.@byte![Vx] = (byte)i;
                     hit = true;
                     break;
                 }
@@ -527,28 +532,28 @@ namespace Chip8Emulator
         private void OP_Fx15(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            DT = registers!.@byte![Vx];
+            DT = Registers!.@byte![Vx];
             CurrentOpcodeDescription += " -  LD    DT" + DT + ", V" + Vx.ToString("X");
         }
 
         private void OP_Fx18(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            ST = registers!.@byte![Vx];
+            ST = Registers!.@byte![Vx];
             CurrentOpcodeDescription += " -  LD    ST" + DT + ", V" + Vx.ToString("X");
         }
 
         private void OP_Fx1E(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            I = (I + registers!.@byte![Vx]) & 0xFFFF;
+            I = (I + Registers!.@byte![Vx]) & 0xFFFF;
             CurrentOpcodeDescription += " -  ADD   V" + Vx.ToString("X") + ", [I]";
         }
 
         private void OP_Fx29(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint digit = (byte)(registers!.@byte![Vx] & 0x0F);
+            uint digit = (byte)(Registers!.@byte![Vx] & 0x0F);
             I = (digit * 0x05) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    [I], V" + Vx.ToString("X");
         }
@@ -556,13 +561,13 @@ namespace Chip8Emulator
         private void OP_Fx33(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            uint value = registers!.@byte![Vx];
+            uint value = Registers!.@byte![Vx];
             var h = value / 100;
             var t = (value - h * 100) / 10;
             var u = value - h * 100 - t * 10;
-            memory!.@byte![I] = (byte)h;
-            memory!.@byte![I + 1] = (byte)t;
-            memory!.@byte![I + 2] = (byte)u;
+            Memory!.@byte![I] = (byte)h;
+            Memory!.@byte![I + 1] = (byte)t;
+            Memory!.@byte![I + 2] = (byte)u;
             CurrentOpcodeDescription += " -  BCD   V" + Vx.ToString("X") + ", " + h + " " + t + " " + u;
         }
 
@@ -571,7 +576,7 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
-                memory!.@byte![I + i] = registers!.@byte![i];
+                Memory!.@byte![I + i] = Registers!.@byte![i];
             if (memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    #" + ii + "+, V0-F";
@@ -582,7 +587,7 @@ namespace Chip8Emulator
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
-                registers!.@byte![i] = memory!.@byte![I + i];
+                Registers!.@byte![i] = Memory!.@byte![I + i];
             if (memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    V0-F, #" + ii + "+";
@@ -646,8 +651,8 @@ namespace Chip8Emulator
             string reg = "";
             for (uint i = 0; i < 16; i++)
             {
-                if (registers!.@byte![i] < 16) reg += "0";
-                reg += registers!.@byte![i].ToString("X");
+                if (Registers!.@byte![i] < 16) reg += "0";
+                reg += Registers!.@byte![i].ToString("X");
                 if (i < 15) reg += " ";
             }
             info.Add(reg);

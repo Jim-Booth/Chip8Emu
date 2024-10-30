@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Media;
+﻿using System.Media;
 
 namespace Chip8Emulator
 {
@@ -9,7 +7,7 @@ namespace Chip8Emulator
         public static void PlaySound(UInt16 frequency, int msDuration, UInt16 volume = 16383)
         {
             var mStrm = new MemoryStream();
-            BinaryWriter writer = new BinaryWriter(mStrm);
+            BinaryWriter writer = new(mStrm);
             const double TAU = 2 * Math.PI;
             int formatChunkSize = 16;
             int headerSize = 8;
@@ -44,7 +42,7 @@ namespace Chip8Emulator
                 writer.Write(s);
             }
             mStrm.Seek(0, SeekOrigin.Begin);
-            SoundPlayer sp = new SoundPlayer(mStrm);
+            SoundPlayer sp = new(mStrm);
             sp.PlaySync();
             writer.Close();
             mStrm.Close();
