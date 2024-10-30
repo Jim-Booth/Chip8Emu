@@ -30,9 +30,6 @@
     <None Update="ROMS\7-beep.ch8">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="ROMS\8-scrolling.ch8">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="ROMS\BC_test.ch8">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
