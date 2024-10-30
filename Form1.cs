@@ -1,13 +1,7 @@
 using Chip8Emulator;
-using System;
-using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace Chip8Emu
 {
@@ -22,10 +16,10 @@ namespace Chip8Emu
         public class FIXED_BYTE_ARRAY
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 320)]
-            public byte[] @byte;
+            public byte[]? @byte;
         }
 
-        private FIXED_BYTE_ARRAY video;
+        private FIXED_BYTE_ARRAY? video;
 
         private string currentLoadedROM = @"Test.ROM";
 
@@ -39,7 +33,7 @@ namespace Chip8Emu
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            chip8.Pause();
+            chip8?.Pause();
         }
 
         private void SetKeyColor(bool down, uint k)
@@ -116,20 +110,26 @@ namespace Chip8Emu
             }*/
         }
 
-        private void keypad_KeyDown(object sender, KeyEventArgs e)
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            uint k = GetKeyValue(e);
-            if (k != 99)
-                chip8.KeyDown = k;
-            SetKeyColor(true, k);
+            if (chip8 != null)
+            {
+                uint k = GetKeyValue(e);
+                if (k != 99)
+                    chip8.KeyDown = k;
+                SetKeyColor(true, k);
+            }
         }
 
-        private void keypad_KeyUp(object sender, KeyEventArgs e)
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            uint k = GetKeyValue(e);
-            if (k != 99)
-                chip8.KeyUp = k;
-            SetKeyColor(false, k);
+            if (chip8 != null)
+            {
+                uint k = GetKeyValue(e);
+                if (k != 99)
+                    chip8.KeyUp = k;
+                SetKeyColor(false, k);
+            }
         }
 
         private uint GetKeyValue(KeyEventArgs e)
@@ -181,7 +181,7 @@ namespace Chip8Emu
 
         private void button2_Click(object sender, EventArgs e)
         {
-            chip8.Pause();
+            chip8!.Pause();
             if (!checkBox1.Checked)
             {
                 textBox1.Text = "";
@@ -212,22 +212,17 @@ namespace Chip8Emu
 
         private void Reset()
         {
-            if (chip8_thread != null)
+            if (chip8 is not null)
             {
-                if (chip8 != null)
+                chip8!.Running = false;
+                chip8.Stop();
+                while (chip8.Running)
                 {
-                    chip8.Running = false;
                     chip8.Stop();
-                    while (chip8.Running)
-                    {
-                        chip8.Stop();
-                        chip8_thread = null;
-                    }
-                    while (chip8_thread.IsAlive)
-                    {
-                        chip8_thread = null;
-                    }
+                    chip8_thread = null;
                 }
+                while (chip8_thread!.IsAlive)
+                    chip8_thread = null;
             }
             panel1.BackColor = Color.Red;
             trackBar1.Value = 20000;
@@ -261,7 +256,7 @@ namespace Chip8Emu
         private void DisplayLoop()
         {
             panel1.BackColor = Color.Black;
-            while (!chip8.Running) { }
+            while (!chip8!.Running) { }
             while (chip8.Running)
             {
                 try
@@ -284,14 +279,14 @@ namespace Chip8Emu
             displayRendering = true;
             Bitmap initalBitmap = new Bitmap(64, 32);
             video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
-            video.@byte = chip8.Video.@byte;
+            video.@byte = chip8!.Video.@byte;
             int cnt = 0;
             for (int y = 0; y < 32; y++)
             {
                 string row = String.Empty;
                 for (int x = 0; x < 64; x++)
                 {
-                    if (video.@byte[cnt] != 0)
+                    if (video!.@byte![cnt] != 0)
                         initalBitmap.SetPixel(x, y, Color.LimeGreen);
                     else
                         initalBitmap.SetPixel(x, y, Color.Black);
@@ -329,35 +324,35 @@ namespace Chip8Emu
         {
             Reset();
             if (comboBox1.SelectedIndex > -1)
-                if (!String.IsNullOrEmpty(comboBox1.SelectedItem.ToString()))
+                if (!String.IsNullOrEmpty(comboBox1.SelectedItem!.ToString()))
                     Execute(@"ROMS\" + comboBox1.Text);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            chip8.Step();
+            chip8!.Step();
             textBox1.Invoke((MethodInvoker)(() => textBox1.Text = String.Join(Environment.NewLine, chip8.DebugMainInfo())));
             textBox2.Invoke((MethodInvoker)(() => textBox2.Text = String.Join(Environment.NewLine, chip8.DebugStackInfo())));
         }
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
-            chip8.JumpQuirk = checkBox4.Checked;
+            chip8!.JumpQuirk = checkBox4.Checked;
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-            chip8.ShiftQuirk = checkBox3.Checked;
+            chip8!.ShiftQuirk = checkBox3.Checked;
         }
 
         private void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
-            chip8.VFReset = checkBox5.Checked;
+            chip8!.VFReset = checkBox5.Checked;
         }
 
         private void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
-            chip8.MemoryQuirk = checkBox6.Checked;
+            chip8!.MemoryQuirk = checkBox6.Checked;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
@@ -383,7 +378,5 @@ namespace Chip8Emu
             else
                 Form1_Shown(sender, e);
         }
-
-
     }
 }

@@ -75,22 +75,26 @@
             // textBox1
             // 
             textBox1.BackColor = Color.Black;
+            textBox1.BorderStyle = BorderStyle.FixedSingle;
             textBox1.Font = new Font("Courier New", 8.25F);
             textBox1.ForeColor = Color.White;
             textBox1.Location = new Point(710, 3);
             textBox1.Multiline = true;
             textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
             textBox1.Size = new Size(342, 160);
             textBox1.TabIndex = 2;
             // 
             // textBox2
             // 
             textBox2.BackColor = Color.Black;
+            textBox2.BorderStyle = BorderStyle.FixedSingle;
             textBox2.Font = new Font("Courier New", 8.25F);
             textBox2.ForeColor = Color.White;
             textBox2.Location = new Point(659, 3);
             textBox2.Multiline = true;
             textBox2.Name = "textBox2";
+            textBox2.ReadOnly = true;
             textBox2.Size = new Size(45, 160);
             textBox2.TabIndex = 3;
             // 
@@ -99,17 +103,17 @@
             checkBox1.AutoSize = true;
             checkBox1.Checked = true;
             checkBox1.CheckState = CheckState.Checked;
-            checkBox1.Location = new Point(931, 169);
+            checkBox1.Location = new Point(942, 169);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(126, 19);
+            checkBox1.Size = new Size(117, 19);
             checkBox1.TabIndex = 4;
-            checkBox1.Text = "Display Debug Info";
+            checkBox1.Text = "Show Debug Info";
             checkBox1.UseVisualStyleBackColor = true;
             // 
             // checkBox2
             // 
             checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(785, 169);
+            checkBox2.Location = new Point(801, 169);
             checkBox2.Name = "checkBox2";
             checkBox2.Size = new Size(135, 19);
             checkBox2.TabIndex = 5;
@@ -203,7 +207,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(793, 247);
+            label1.Location = new Point(797, 247);
             label1.Name = "label1";
             label1.Size = new Size(38, 15);
             label1.TabIndex = 14;
@@ -211,12 +215,14 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(838, 243);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(171, 23);
             comboBox1.TabIndex = 15;
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox1.KeyPress += comboBox_KeyPress;
             // 
             // button5
             // 
@@ -243,7 +249,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(794, 282);
+            label2.Location = new Point(797, 282);
             label2.Name = "label2";
             label2.Size = new Size(41, 15);
             label2.TabIndex = 18;
@@ -286,9 +292,14 @@
             Controls.Add(textBox1);
             Controls.Add(panel1);
             Controls.Add(trackBar1);
+            DoubleBuffered = true;
+            KeyPreview = true;
             Name = "Form1";
             Text = "Form1";
+            FormClosing += Form1_FormClosing;
             Shown += Form1_Shown;
+            KeyDown += Form1_KeyDown;
+            KeyUp += Form1_KeyUp;
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
