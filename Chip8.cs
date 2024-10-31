@@ -519,7 +519,7 @@ namespace Chip8Emulator
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
             PC -= 2;
-            if(keyStage == 0)
+            if (keyStage == 0)
                 keyStage = 1;
             if (keyStage == 1)
                 for (uint i = 0; i <= 15; i++)
@@ -530,11 +530,15 @@ namespace Chip8Emulator
                         return;
                     }
             if (keyStage == 2)
-                if(Keypad!.@byte![Registers!.@byte![Vx]] == 0)
+            {
+                if (ST == 0)
+                    ST = 4;
+                if (Keypad!.@byte![Registers!.@byte![Vx]] == 0)
                 {
                     keyStage = 0;
                     PC += 2;
                 }
+            }
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X");
         }
 
