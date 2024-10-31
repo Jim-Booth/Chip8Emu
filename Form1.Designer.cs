@@ -503,7 +503,7 @@
             DoubleBuffered = true;
             KeyPreview = true;
             Name = "Form1";
-            Text = "Form1";
+            Text = " ";
             FormClosing += Form1_FormClosing;
             Shown += Form1_Shown;
             KeyDown += Form1_KeyDown;

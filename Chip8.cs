@@ -599,6 +599,7 @@ namespace Chip8Emulator
             CurrentOpcodeDescription = opHex + "  ";
             if (opHex == "00E0") { OP_00E0(opcode); return; }
             if (opHex == "00EE") { OP_00EE(opcode); return; }
+            if (opHex[0] == '0') { return; }
             if (opHex[0] == '1') { OP_1nnn(opcode); return; }
             if (opHex[0] == '2') { OP_2nnn(opcode); return; }
             if (opHex[0] == '3') { OP_3xnn(opcode); return; }
