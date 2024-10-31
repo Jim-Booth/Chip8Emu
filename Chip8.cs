@@ -78,6 +78,8 @@ namespace Chip8Emulator
             set { Keypad!.@byte![value] = 0; }
         }
 
+        private int keyStage = 0;
+
         private bool step = true;
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
@@ -516,16 +518,23 @@ namespace Chip8Emulator
         private void OP_Fx0A(uint opcode)
         {
             uint Vx = (opcode & (uint)0x0F00) >> 8;
-            bool hit = false;
-            for (uint i = 0; i < 15; i++)
-                if (Keypad!.@byte![i] != 0)
+            PC -= 2;
+            if(keyStage == 0)
+                keyStage = 1;
+            if (keyStage == 1)
+                for (uint i = 0; i <= 15; i++)
+                    if (Keypad!.@byte![i] != 0)
+                    {
+                        Registers!.@byte![Vx] = (byte)i;
+                        keyStage = 2;
+                        return;
+                    }
+            if (keyStage == 2)
+                if(Keypad!.@byte![Registers!.@byte![Vx]] == 0)
                 {
-                    Registers!.@byte![Vx] = (byte)i;
-                    hit = true;
-                    break;
+                    keyStage = 0;
+                    PC += 2;
                 }
-            if (!hit)
-                PC -= 2;
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X");
         }
 
