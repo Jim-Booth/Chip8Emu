@@ -53,11 +53,10 @@ namespace Chip8Emulator
             set { memoryQuirk = value; }
         }
 
-        private bool displayAvailable = true;
-
-        public bool DisplayAvailable
+        private bool displayUpdateAvailable = false;
+        public bool DisplayUpdateAvailable
         {
-            get { return displayAvailable; }
+            get { return displayUpdateAvailable; }
         }
 
         private int simTick = 20000;
@@ -168,6 +167,7 @@ namespace Chip8Emulator
                 var watch = Stopwatch.StartNew();
                 uint opcode = ((uint)Memory!.@byte![PC] << 8) | Memory!.@byte![PC + 1];
                 uint p = PC;
+                displayUpdateAvailable = false;
 
                 // Cycle the CPU
                 if (!debugMode)
@@ -203,6 +203,7 @@ namespace Chip8Emulator
                 watch.Stop();
             }
             running = false;
+            displayUpdateAvailable = true;
         }
 
         public void Pause()
@@ -484,6 +485,7 @@ namespace Chip8Emulator
                         if (vp != 0 && video!.@byte![vp] == 1)
                             Registers!.@byte![15] = 1;
                         video!.@byte![vp] ^= 1;
+                        displayUpdateAvailable = true;
                     }
                 }
             }

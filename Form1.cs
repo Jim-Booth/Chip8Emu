@@ -260,7 +260,7 @@ namespace Chip8Emu
             {
                 try
                 {
-                    if (chip8.DisplayAvailable && !displayRendering)
+                    if (chip8.DisplayUpdateAvailable && !displayRendering)
                         RenderScreen();
                     if (checkBox1.Checked)
                     {
@@ -275,41 +275,44 @@ namespace Chip8Emu
 
         private void RenderScreen()
         {
-            displayRendering = true;
-            Bitmap initalBitmap = new(64, 32);
-            video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
-            video.@byte = chip8!.Video.@byte;
-            int cnt = 0;
-            for (int y = 0; y < 32; y++)
+            if (chip8!.DisplayUpdateAvailable)
             {
-                string row = String.Empty;
-                for (int x = 0; x < 64; x++)
+                displayRendering = true;
+                Bitmap initalBitmap = new(64, 32);
+                video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
+                video.@byte = chip8!.Video.@byte;
+                int cnt = 0;
+                for (int y = 0; y < 32; y++)
                 {
-                    if (video!.@byte![cnt] != 0)
-                        initalBitmap.SetPixel(x, y, Color.LimeGreen);
-                    else
-                        initalBitmap.SetPixel(x, y, Color.Black);
-                    cnt++;
+                    string row = String.Empty;
+                    for (int x = 0; x < 64; x++)
+                    {
+                        if (video!.@byte![cnt] != 0)
+                            initalBitmap.SetPixel(x, y, Color.LimeGreen);
+                        else
+                            initalBitmap.SetPixel(x, y, Color.Black);
+                        cnt++;
+                    }
                 }
-            }
-            Rectangle outputContainerRect = new(0, 0, 640, 320);
-            Bitmap outputBitmap = new(640, 320);
-            outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
-            using (Graphics graphics = Graphics.FromImage(outputBitmap))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (ImageAttributes wrapMode = new())
+                Rectangle outputContainerRect = new(0, 0, 640, 320);
+                Bitmap outputBitmap = new(640, 320);
+                outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
+                using (Graphics graphics = Graphics.FromImage(outputBitmap))
                 {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
+                    graphics.CompositingMode = CompositingMode.SourceCopy;
+                    graphics.CompositingQuality = CompositingQuality.HighQuality;
+                    graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                    graphics.SmoothingMode = SmoothingMode.HighQuality;
+                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    using (ImageAttributes wrapMode = new())
+                    {
+                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                        graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
+                    }
                 }
+                pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
+                displayRendering = false;
             }
-            pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
-            displayRendering = false;
         }
 
         private void SearchForCH8Roms()
