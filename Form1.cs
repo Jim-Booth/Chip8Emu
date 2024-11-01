@@ -235,6 +235,8 @@ namespace Chip8Emu
                 button2.Text = "Run";
             trackBar1.Value = 20000;
             panel1.BackColor = Color.Black;
+
+            // start Chip8 in it's own thread
             chip8 = new Chip8();
             chip8.ShiftQuirk = checkBox3.Checked;
             chip8.VFReset = checkBox5.Checked;
@@ -242,14 +244,14 @@ namespace Chip8Emu
             chip8.MemoryQuirk = checkBox6.Checked;
             chip8.DebugMode = checkBox2.Checked;
             chip8.LoadROM(romPath);
+            chip8_thread = new Thread(() => chip8.Start());
+            chip8_thread.IsBackground = true;
+            chip8_thread.Start();
+
             // update form display in it's own thread
             displayThread = new Thread(() => DisplayLoop());
             displayThread.IsBackground = true;
             displayThread.Start();
-            // start Chip8 in it's own thread
-            chip8_thread = new Thread(() => chip8.Start());
-            chip8_thread.IsBackground = true;
-            chip8_thread.Start();
         }
 
         private void DisplayLoop()
@@ -260,7 +262,7 @@ namespace Chip8Emu
             {
                 try
                 {
-                    if (chip8.DisplayUpdateAvailable && !displayRendering)
+                    if (!displayRendering)
                         RenderScreen();
                     if (checkBox1.Checked)
                     {
@@ -275,44 +277,42 @@ namespace Chip8Emu
 
         private void RenderScreen()
         {
-            if (chip8!.DisplayUpdateAvailable)
+
+            displayRendering = true;
+            Bitmap initalBitmap = new(64, 32);
+            video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
+            video.@byte = chip8!.Video.@byte;
+            int cnt = 0;
+            for (int y = 0; y < 32; y++)
             {
-                displayRendering = true;
-                Bitmap initalBitmap = new(64, 32);
-                video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
-                video.@byte = chip8!.Video.@byte;
-                int cnt = 0;
-                for (int y = 0; y < 32; y++)
+                string row = String.Empty;
+                for (int x = 0; x < 64; x++)
                 {
-                    string row = String.Empty;
-                    for (int x = 0; x < 64; x++)
-                    {
-                        if (video!.@byte![cnt] != 0)
-                            initalBitmap.SetPixel(x, y, Color.LimeGreen);
-                        else
-                            initalBitmap.SetPixel(x, y, Color.Black);
-                        cnt++;
-                    }
+                    if (video!.@byte![cnt] != 0)
+                        initalBitmap.SetPixel(x, y, Color.LimeGreen);
+                    else
+                        initalBitmap.SetPixel(x, y, Color.Black);
+                    cnt++;
                 }
-                Rectangle outputContainerRect = new(0, 0, 640, 320);
-                Bitmap outputBitmap = new(640, 320);
-                outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
-                using (Graphics graphics = Graphics.FromImage(outputBitmap))
-                {
-                    graphics.CompositingMode = CompositingMode.SourceCopy;
-                    graphics.CompositingQuality = CompositingQuality.HighQuality;
-                    graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                    graphics.SmoothingMode = SmoothingMode.HighQuality;
-                    graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                    using (ImageAttributes wrapMode = new())
-                    {
-                        wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                        graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
-                    }
-                }
-                pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
-                displayRendering = false;
             }
+            Rectangle outputContainerRect = new(0, 0, 640, 320);
+            Bitmap outputBitmap = new(640, 320);
+            outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
+            using (Graphics graphics = Graphics.FromImage(outputBitmap))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using (ImageAttributes wrapMode = new())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+            pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
+            displayRendering = false;
         }
 
         private void SearchForCH8Roms()

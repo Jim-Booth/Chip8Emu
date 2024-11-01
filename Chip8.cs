@@ -53,12 +53,6 @@ namespace Chip8Emulator
             set { memoryQuirk = value; }
         }
 
-        private bool displayUpdateAvailable = false;
-        public bool DisplayUpdateAvailable
-        {
-            get { return displayUpdateAvailable; }
-        }
-
         private int simTick = 20000;
 
         public int SimTick
@@ -167,7 +161,6 @@ namespace Chip8Emulator
                 var watch = Stopwatch.StartNew();
                 uint opcode = ((uint)Memory!.@byte![PC] << 8) | Memory!.@byte![PC + 1];
                 uint p = PC;
-                displayUpdateAvailable = false;
 
                 // Cycle the CPU
                 if (!debugMode)
@@ -203,7 +196,6 @@ namespace Chip8Emulator
                 watch.Stop();
             }
             running = false;
-            displayUpdateAvailable = true;
         }
 
         public void Pause()
@@ -485,7 +477,6 @@ namespace Chip8Emulator
                         if (vp != 0 && video!.@byte![vp] == 1)
                             Registers!.@byte![15] = 1;
                         video!.@byte![vp] ^= 1;
-                        displayUpdateAvailable = true;
                     }
                 }
             }
@@ -532,7 +523,6 @@ namespace Chip8Emulator
                         return;
                     }
             if (keyStage == 2)
-            {
                 if (ST == 0)
                     ST = 4;
                 if (Keypad!.@byte![Registers!.@byte![Vx]] == 0)
@@ -540,9 +530,9 @@ namespace Chip8Emulator
                     keyStage = 0;
                     PC += 2;
                 }
-            }
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X");
         }
+
 
         private void OP_Fx15(uint opcode)
         {
@@ -592,7 +582,7 @@ namespace Chip8Emulator
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
                 Memory!.@byte![I + i] = Registers!.@byte![i];
-            if (!memoryQuirk)
+            if (memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    #" + ii + "+, V0-F";
         }
@@ -603,7 +593,7 @@ namespace Chip8Emulator
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
                 Registers!.@byte![i] = Memory!.@byte![I + i];
-            if (!memoryQuirk)
+            if (memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    V0-F, #" + ii + "+";
         }
