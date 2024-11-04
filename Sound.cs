@@ -42,8 +42,8 @@ namespace Chip8Emulator
                 writer.Write(s);
             }
             mStrm.Seek(0, SeekOrigin.Begin);
-            SoundPlayer sp = new(mStrm);
-            sp.PlaySync();
+            using (SoundPlayer sp = new(mStrm))
+                sp.PlaySync();
             writer.Close();
             mStrm.Close();
         }
