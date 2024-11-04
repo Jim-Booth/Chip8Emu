@@ -221,12 +221,52 @@ namespace Chip8Emulator
         {
             PC += 2;
             CallOpcode(opcode);
-
             if (debugMode)
             {
                 step = false;
                 while (!step) { }
             }
+        }
+
+        private void CallOpcode(uint opcode)
+        {
+            string opHex = opcode.ToString("X4");
+            CurrentOpcodeDescription = opHex + "  ";
+            if (opHex == "00E0") { OP_00E0(opcode); return; }
+            if (opHex == "00EE") { OP_00EE(opcode); return; }
+            if (opHex[0] == '1') { OP_1nnn(opcode); return; }
+            if (opHex[0] == '2') { OP_2nnn(opcode); return; }
+            if (opHex[0] == '3') { OP_3xnn(opcode); return; }
+            if (opHex[0] == '4') { OP_4xnn(opcode); return; }
+            if (opHex[0] == '6') { OP_6xnn(opcode); return; }
+            if (opHex[0] == '7') { OP_7xnn(opcode); return; }
+            if (opHex[0] == 'A') { OP_Annn(opcode); return; }
+            if (opHex[0] == 'B') { OP_Bnnn(opcode); return; }
+            if (opHex[0] == 'C') { OP_Cxnn(opcode); return; }
+            if (opHex[0] == 'D') { OP_Dxyn(opcode); return; }
+            if (opHex[0] == '5' && opHex[3] == '0') { OP_5xy0(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '0') { OP_8xy0(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '1') { OP_8xy1(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '2') { OP_8xy2(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '3') { OP_8xy3(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '4') { OP_8xy4(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '5') { OP_8xy5(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '6') { OP_8xy6(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == '7') { OP_8xy7(opcode); return; }
+            if (opHex[0] == '8' && opHex[3] == 'E') { OP_8xyE(opcode); return; }
+            if (opHex[0] == '9' && opHex[3] == '0') { OP_9xy0(opcode); return; }
+            if (opHex[0] == 'E' && opHex[2] == '9' && opHex[3] == 'E') { OP_Ex9E(opcode); return; }
+            if (opHex[0] == 'E' && opHex[2] == 'A' && opHex[3] == '1') { OP_ExA1(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == '7') { OP_Fx07(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == 'A') { OP_Fx0A(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == '5') { OP_Fx15(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == '8') { OP_Fx18(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == 'E') { OP_Fx1E(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '2' && opHex[3] == '9') { OP_Fx29(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '3' && opHex[3] == '3') { OP_Fx33(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '5' && opHex[3] == '5') { OP_Fx55(opcode); return; }
+            if (opHex[0] == 'F' && opHex[2] == '6' && opHex[3] == '5') { OP_Fx65(opcode); return; }
+            throw new Exception("Invalid Opcode");
         }
 
         private void UpdateTimers()
@@ -595,48 +635,6 @@ namespace Chip8Emulator
             if (memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    V0-F, #" + ii + "+";
-        }
-
-        private void CallOpcode(uint opcode)
-        {
-            string opHex = opcode.ToString("X4");
-            CurrentOpcodeDescription = opHex + "  ";
-            if (opHex == "00E0") { OP_00E0(opcode); return; }
-            if (opHex == "00EE") { OP_00EE(opcode); return; }
-            if (opHex[0] == '0') { return; }
-            if (opHex[0] == '1') { OP_1nnn(opcode); return; }
-            if (opHex[0] == '2') { OP_2nnn(opcode); return; }
-            if (opHex[0] == '3') { OP_3xnn(opcode); return; }
-            if (opHex[0] == '4') { OP_4xnn(opcode); return; }
-            if (opHex[0] == '6') { OP_6xnn(opcode); return; }
-            if (opHex[0] == '7') { OP_7xnn(opcode); return; }
-            if (opHex[0] == 'A') { OP_Annn(opcode); return; }
-            if (opHex[0] == 'B') { OP_Bnnn(opcode); return; }
-            if (opHex[0] == 'C') { OP_Cxnn(opcode); return; }
-            if (opHex[0] == 'D') { OP_Dxyn(opcode); return; }
-            if (opHex[0] == '5' && opHex[3] == '0') { OP_5xy0(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '0') { OP_8xy0(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '1') { OP_8xy1(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '2') { OP_8xy2(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '3') { OP_8xy3(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '4') { OP_8xy4(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '5') { OP_8xy5(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '6') { OP_8xy6(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == '7') { OP_8xy7(opcode); return; }
-            if (opHex[0] == '8' && opHex[3] == 'E') { OP_8xyE(opcode); return; }
-            if (opHex[0] == '9' && opHex[3] == '0') { OP_9xy0(opcode); return; }
-            if (opHex[0] == 'E' && opHex[2] == '9' && opHex[3] == 'E') { OP_Ex9E(opcode); return; }
-            if (opHex[0] == 'E' && opHex[2] == 'A' && opHex[3] == '1') { OP_ExA1(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == '7') { OP_Fx07(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == 'A') { OP_Fx0A(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == '5') { OP_Fx15(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == '8') { OP_Fx18(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '1' && opHex[3] == 'E') { OP_Fx1E(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '2' && opHex[3] == '9') { OP_Fx29(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '3' && opHex[3] == '3') { OP_Fx33(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '5' && opHex[3] == '5') { OP_Fx55(opcode); return; }
-            if (opHex[0] == 'F' && opHex[2] == '6' && opHex[3] == '5') { OP_Fx65(opcode); return; }
-            throw new Exception("Invalid Opcode");
         }
 
         public List<string> DebugStackInfo()
