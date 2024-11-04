@@ -192,7 +192,10 @@ namespace Chip8Emulator
                 // Ensures a max 500Hz CPU speed
                 while (watch.ElapsedTicks < simTick)
                     if (!running)
+                    {
+                        watch.Stop();
                         break;
+                    }
                 watch.Stop();
             }
             running = false;

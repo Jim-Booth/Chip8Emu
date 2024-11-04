@@ -1,4 +1,5 @@
 using Chip8Emulator;
+using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
@@ -256,32 +257,40 @@ namespace Chip8Emu
 
         private void DisplayLoop()
         {
-            panel1.BackColor = Color.Black;
             while (!chip8!.Running) { }
             while (chip8.Running)
             {
+                panel1.Invoke((MethodInvoker)delegate { panel1.BackColor = Color.FromArgb(0, 16, 0); });
+                panel1.Invoke((MethodInvoker)delegate { panel1.Refresh(); });
+                
+                var watch = Stopwatch.StartNew();
+                while (watch.ElapsedTicks < 20000) { }
+                watch.Stop();
                 try
                 {
-                    if (!displayRendering)
-                        RenderScreen();
-                    if (checkBox1.Checked)
-                    {
-                        textBox1.Invoke((MethodInvoker)(() => textBox1.Text = String.Join(Environment.NewLine, chip8.DebugMainInfo())));
-                        textBox2.Invoke((MethodInvoker)(() => textBox2.Text = String.Join(Environment.NewLine, chip8.DebugStackInfo())));
-                    }
+                    RenderScreen();
+                    RenderDebugInfo();
                 }
                 catch { }
             }
             panel1.BackColor = Color.Red;
         }
 
+        private void RenderDebugInfo()
+        {
+            if (checkBox1.Checked && chip8!.Running)
+            {
+                textBox1.Invoke((MethodInvoker)(() => textBox1.Text = String.Join(Environment.NewLine, chip8!.DebugMainInfo())));
+                textBox2.Invoke((MethodInvoker)(() => textBox2.Text = String.Join(Environment.NewLine, chip8!.DebugStackInfo())));
+            }
+        }
         private void RenderScreen()
         {
-
-            displayRendering = true;
             Bitmap initalBitmap = new(64, 32);
             video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
             video.@byte = chip8!.Video.@byte;
+            Color backColor = Color.FromArgb(0, 16, 0);
+            Color foreColor = Color.LimeGreen;
             int cnt = 0;
             for (int y = 0; y < 32; y++)
             {
@@ -289,9 +298,9 @@ namespace Chip8Emu
                 for (int x = 0; x < 64; x++)
                 {
                     if (video!.@byte![cnt] != 0)
-                        initalBitmap.SetPixel(x, y, Color.LimeGreen);
+                        initalBitmap.SetPixel(x, y, foreColor);
                     else
-                        initalBitmap.SetPixel(x, y, Color.Black);
+                        initalBitmap.SetPixel(x, y, backColor);
                     cnt++;
                 }
             }
@@ -312,7 +321,6 @@ namespace Chip8Emu
                 }
             }
             pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
-            displayRendering = false;
         }
 
         private void SearchForCH8Roms()
