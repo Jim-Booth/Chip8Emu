@@ -53,6 +53,13 @@ namespace Chip8Emulator
             set { memoryQuirk = value; }
         }
 
+        private bool displayUpdated = false;
+
+        public bool DisplayUpdated
+        {
+            get { return displayUpdated; }
+        }
+
         private int simTick = 20000;
 
         public int SimTick
@@ -103,9 +110,17 @@ namespace Chip8Emulator
         private FIXED_BYTE_ARRAY Keypad { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
         private const uint START_ADDRESS = 0x200;
         private const int FONTSET_SIZE = 80;
-        private const uint FONTSET_START_ADDRESS = 0x50;
-        private const uint VIDEO_WIDTH = 64;
-        private const uint VIDEO_HEIGHT = 32;
+        private const int FONTSET_START_ADDRESS = 0x50;
+        private const int VIDEO_WIDTH = 64;
+        public int VideoWidth
+        {
+            get { return VIDEO_WIDTH; }
+        }
+        private const int VIDEO_HEIGHT = 32;
+        public int VideoHeight
+        {
+            get { return VIDEO_HEIGHT; }
+        }
         private bool PlayingSound;
 
         private byte[] FONTS { get; } = new byte[FONTSET_SIZE]
@@ -128,27 +143,26 @@ namespace Chip8Emulator
 	        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
         };
 
-        public Chip8()
+        public Chip8(string filePathROM)
         {
             PC = START_ADDRESS;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[VIDEO_WIDTH * VIDEO_HEIGHT] };
             for (uint i = 0; i < FONTSET_SIZE; i++)
                 Memory!.@byte![i] = FONTS[i];
+            LoadROM(filePathROM);
         }
 
-        public void LoadROM(string filePath)
+        private void LoadROM(string filePath)
         {
-            using (FileStream fs = new(filePath, FileMode.Open, FileAccess.Read))
-            {
-                BinaryReader br = new(fs);
-                long progSize = new FileInfo(filePath).Length;
-                byte[] rom = br.ReadBytes((int)progSize);
-                if (rom.Length <= Memory!.@byte!.Length)
-                    for (long i = 0; i < rom.Length; i++)
-                        Memory!.@byte![START_ADDRESS + i] = rom[i];
-                else
-                    throw new Exception("Memory Overflow");
-            }
+            using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
+            BinaryReader br = new(fs);
+            long progSize = new FileInfo(filePath).Length;
+            byte[] rom = br.ReadBytes((int)progSize);
+            if (rom.Length <= Memory!.@byte!.Length)
+                for (long i = 0; i < rom.Length; i++)
+                    Memory!.@byte![START_ADDRESS + i] = rom[i];
+            else
+                throw new Exception("Memory Overflow");
         }
 
         public void Start()
@@ -506,9 +520,10 @@ namespace Chip8Emulator
             int Vx = (int)((opcode & (uint)0x0F00) >> 8);
             int Vy = (int)((opcode & (uint)0x00F0) >> 4);
             uint height = (uint)(opcode & (uint)0x000F);
-            uint xPos = Registers!.@byte![Vx] % VIDEO_WIDTH;
-            uint yPos = Registers!.@byte![Vy] % VIDEO_HEIGHT;
+            uint xPos = Registers!.@byte![Vx] % (uint)VIDEO_WIDTH;
+            uint yPos = Registers!.@byte![Vy] % (uint)VIDEO_HEIGHT;
             Registers!.@byte![15] = 0;
+            displayUpdated = false;
             for (uint row = 0; row < height; row++)
             {
                 uint spriteByte = Memory!.@byte![I + row];
@@ -520,6 +535,7 @@ namespace Chip8Emulator
                         if (vp != 0 && video!.@byte![vp] == 1)
                             Registers!.@byte![15] = 1;
                         video!.@byte![vp] ^= 1;
+                        displayUpdated = true;
                     }
                 }
             }
@@ -621,7 +637,7 @@ namespace Chip8Emulator
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
                 Memory!.@byte![I + i] = Registers!.@byte![i];
-            if (memoryQuirk)
+            if (!memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    #" + ii + "+, V0-F";
         }
@@ -632,7 +648,7 @@ namespace Chip8Emulator
             uint ii = I;
             for (uint i = 0; i <= Vx; i++)
                 Registers!.@byte![i] = Memory!.@byte![I + i];
-            if (memoryQuirk)
+            if (!memoryQuirk)
                 I = (I + Vx + 1) & 0xFFFF;
             CurrentOpcodeDescription += " -  LD    V0-F, #" + ii + "+";
         }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace Chip8Emu
 {
@@ -22,9 +23,17 @@ namespace Chip8Emu
 
         private FIXED_BYTE_ARRAY? video;
 
-        private string currentLoadedROM = @"Test.ROM";
+        private int displayScale = 10;
 
-        private bool displayRendering = false;
+        private int videoWidth = 0;
+
+        private int videoHeight = 0;
+
+        private SolidBrush foreBrush = new SolidBrush(Color.LimeGreen);
+
+        private Color backColor = Color.FromArgb(0, 16, 0);
+
+        private string currentLoadedROM = @"Test.ROM";
 
         public Form1()
         {
@@ -230,48 +239,39 @@ namespace Chip8Emu
 
         private void Execute(string romPath)
         {
-            if (displayThread != null)
-                displayThread = null;
             if (checkBox2.Checked)
                 button2.Text = "Run";
             trackBar1.Value = 20000;
             panel1.BackColor = Color.Black;
 
             // start Chip8 in it's own thread
-            chip8 = new Chip8();
+            chip8 = new Chip8(romPath);
             chip8.ShiftQuirk = checkBox3.Checked;
             chip8.VFReset = checkBox5.Checked;
             chip8.JumpQuirk = checkBox4.Checked;
             chip8.MemoryQuirk = checkBox6.Checked;
             chip8.DebugMode = checkBox2.Checked;
-            chip8.LoadROM(romPath);
             chip8_thread = new Thread(() => chip8.Start());
             chip8_thread.IsBackground = true;
             chip8_thread.Start();
 
-            // update form display in it's own thread
-            displayThread = new Thread(() => DisplayLoop());
+            // create and update form display in it's own thread
+            videoWidth = chip8.VideoWidth;
+            videoHeight = chip8.VideoHeight;
+            video = new FIXED_BYTE_ARRAY { @byte = new byte[videoWidth * videoHeight] };
+            displayThread = new Thread(() => DisplayThreadLoop());
             displayThread.IsBackground = true;
             displayThread.Start();
         }
 
-        private void DisplayLoop()
+        private void DisplayThreadLoop()
         {
             while (!chip8!.Running) { }
             while (chip8.Running)
             {
-                panel1.Invoke((MethodInvoker)delegate { panel1.BackColor = Color.FromArgb(0, 16, 0); });
-                panel1.Invoke((MethodInvoker)delegate { panel1.Refresh(); });
-                
-                var watch = Stopwatch.StartNew();
-                while (watch.ElapsedTicks < 20000) { }
-                watch.Stop();
-                try
-                {
+                if (chip8!.DisplayUpdated)
                     RenderScreen();
-                    RenderDebugInfo();
-                }
-                catch { }
+                RenderDebugInfo();               
             }
             panel1.BackColor = Color.Red;
         }
@@ -286,40 +286,14 @@ namespace Chip8Emu
         }
         private void RenderScreen()
         {
-            Bitmap initalBitmap = new(64, 32);
-            video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
-            video.@byte = chip8!.Video.@byte;
-            Color backColor = Color.FromArgb(0, 16, 0);
-            Color foreColor = Color.LimeGreen;
-            int cnt = 0;
-            for (int y = 0; y < 32; y++)
-            {
-                string row = String.Empty;
-                for (int x = 0; x < 64; x++)
-                {
-                    if (video!.@byte![cnt] != 0)
-                        initalBitmap.SetPixel(x, y, foreColor);
-                    else
-                        initalBitmap.SetPixel(x, y, backColor);
-                    cnt++;
-                }
-            }
-            Rectangle outputContainerRect = new(0, 0, 640, 320);
-            Bitmap outputBitmap = new(640, 320);
-            outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
+            video!.@byte = chip8!.Video.@byte;
+            Bitmap outputBitmap = new(videoWidth * displayScale, videoHeight * displayScale);
+            int videoBytePointer = 0;
             using (Graphics graphics = Graphics.FromImage(outputBitmap))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-                using (ImageAttributes wrapMode = new())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
+                for (int y = 0; y < videoHeight * displayScale; y += displayScale)
+                    for (int x = 0; x < videoWidth * displayScale; x += displayScale)
+                        if (video!.@byte![videoBytePointer++] != 0)
+                            graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale);
             pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
         }
 
