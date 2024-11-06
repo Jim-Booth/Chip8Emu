@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            pictureBox1 = new PictureBox();
-            panel1 = new Panel();
-            textBox1 = new TextBox();
-            textBox2 = new TextBox();
-            checkBox1 = new CheckBox();
-            checkBox2 = new CheckBox();
-            checkBox3 = new CheckBox();
-            checkBox4 = new CheckBox();
-            checkBox5 = new CheckBox();
-            checkBox6 = new CheckBox();
-            button1 = new Button();
-            button2 = new Button();
-            button3 = new Button();
-            button4 = new Button();
+            videoPictureBox = new PictureBox();
+            videoBackPanel = new Panel();
+            debugTextBox = new TextBox();
+            stackTextBox = new TextBox();
+            showDebugCheckBox = new CheckBox();
+            startInDebugModeCheckBox = new CheckBox();
+            shiftQuirkCheckBox = new CheckBox();
+            jumpQuirkCheckBox = new CheckBox();
+            vfQuirkCheckBox = new CheckBox();
+            memQuirkCheckBox = new CheckBox();
+            resetButton = new Button();
+            pauseButton = new Button();
+            loadButton = new Button();
+            stepButton = new Button();
             label1 = new Label();
-            comboBox1 = new ComboBox();
-            button5 = new Button();
-            trackBar1 = new TrackBar();
+            romComboBox = new ComboBox();
+            reloadButton = new Button();
+            trackBar = new TrackBar();
             label2 = new Label();
             label3 = new Label();
             openFileDialog = new OpenFileDialog();
@@ -66,161 +66,161 @@
             label20 = new Label();
             label21 = new Label();
             panel2 = new Panel();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)trackBar1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)videoPictureBox).BeginInit();
+            videoBackPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
             panel2.SuspendLayout();
             SuspendLayout();
             // 
-            // pictureBox1
+            // videoPictureBox
             // 
-            pictureBox1.BackColor = Color.FromArgb(0, 16, 0);
-            pictureBox1.Location = new Point(3, 3);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(640, 320);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
+            videoPictureBox.BackColor = Color.FromArgb(0, 16, 0);
+            videoPictureBox.Location = new Point(3, 3);
+            videoPictureBox.Name = "videoPictureBox";
+            videoPictureBox.Size = new Size(640, 320);
+            videoPictureBox.TabIndex = 0;
+            videoPictureBox.TabStop = false;
             // 
-            // panel1
+            // videoBackPanel
             // 
-            panel1.BorderStyle = BorderStyle.Fixed3D;
-            panel1.Controls.Add(pictureBox1);
-            panel1.Location = new Point(3, 3);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(650, 330);
-            panel1.TabIndex = 1;
+            videoBackPanel.BorderStyle = BorderStyle.Fixed3D;
+            videoBackPanel.Controls.Add(videoPictureBox);
+            videoBackPanel.Location = new Point(3, 3);
+            videoBackPanel.Name = "videoBackPanel";
+            videoBackPanel.Size = new Size(650, 330);
+            videoBackPanel.TabIndex = 1;
             // 
-            // textBox1
+            // debugTextBox
             // 
-            textBox1.BackColor = Color.Black;
-            textBox1.BorderStyle = BorderStyle.FixedSingle;
-            textBox1.Font = new Font("Courier New", 8.25F);
-            textBox1.ForeColor = Color.White;
-            textBox1.Location = new Point(710, 3);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(342, 160);
-            textBox1.TabIndex = 2;
+            debugTextBox.BackColor = Color.Black;
+            debugTextBox.BorderStyle = BorderStyle.FixedSingle;
+            debugTextBox.Font = new Font("Courier New", 8.25F);
+            debugTextBox.ForeColor = Color.White;
+            debugTextBox.Location = new Point(710, 3);
+            debugTextBox.Multiline = true;
+            debugTextBox.Name = "debugTextBox";
+            debugTextBox.ReadOnly = true;
+            debugTextBox.Size = new Size(342, 160);
+            debugTextBox.TabIndex = 2;
             // 
-            // textBox2
+            // stackTextBox
             // 
-            textBox2.BackColor = Color.Black;
-            textBox2.BorderStyle = BorderStyle.FixedSingle;
-            textBox2.Font = new Font("Courier New", 8.25F);
-            textBox2.ForeColor = Color.White;
-            textBox2.Location = new Point(659, 3);
-            textBox2.Multiline = true;
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new Size(45, 160);
-            textBox2.TabIndex = 3;
+            stackTextBox.BackColor = Color.Black;
+            stackTextBox.BorderStyle = BorderStyle.FixedSingle;
+            stackTextBox.Font = new Font("Courier New", 8.25F);
+            stackTextBox.ForeColor = Color.White;
+            stackTextBox.Location = new Point(659, 3);
+            stackTextBox.Multiline = true;
+            stackTextBox.Name = "stackTextBox";
+            stackTextBox.ReadOnly = true;
+            stackTextBox.Size = new Size(45, 160);
+            stackTextBox.TabIndex = 3;
             // 
-            // checkBox1
+            // showDebugCheckBox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Checked = true;
-            checkBox1.CheckState = CheckState.Checked;
-            checkBox1.Location = new Point(942, 169);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(117, 19);
-            checkBox1.TabIndex = 4;
-            checkBox1.Text = "Show Debug Info";
-            checkBox1.UseVisualStyleBackColor = true;
+            showDebugCheckBox.AutoSize = true;
+            showDebugCheckBox.Checked = true;
+            showDebugCheckBox.CheckState = CheckState.Checked;
+            showDebugCheckBox.Location = new Point(942, 169);
+            showDebugCheckBox.Name = "showDebugCheckBox";
+            showDebugCheckBox.Size = new Size(117, 19);
+            showDebugCheckBox.TabIndex = 4;
+            showDebugCheckBox.Text = "Show Debug Info";
+            showDebugCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox2
+            // startInDebugModeCheckBox
             // 
-            checkBox2.AutoSize = true;
-            checkBox2.Location = new Point(801, 169);
-            checkBox2.Name = "checkBox2";
-            checkBox2.Size = new Size(135, 19);
-            checkBox2.TabIndex = 5;
-            checkBox2.Text = "Start in Debug Mode";
-            checkBox2.UseVisualStyleBackColor = true;
+            startInDebugModeCheckBox.AutoSize = true;
+            startInDebugModeCheckBox.Location = new Point(801, 169);
+            startInDebugModeCheckBox.Name = "startInDebugModeCheckBox";
+            startInDebugModeCheckBox.Size = new Size(135, 19);
+            startInDebugModeCheckBox.TabIndex = 5;
+            startInDebugModeCheckBox.Text = "Start in Debug Mode";
+            startInDebugModeCheckBox.UseVisualStyleBackColor = true;
             // 
-            // checkBox3
+            // shiftQuirkCheckBox
             // 
-            checkBox3.AutoSize = true;
-            checkBox3.Location = new Point(762, 314);
-            checkBox3.Name = "checkBox3";
-            checkBox3.Size = new Size(82, 19);
-            checkBox3.TabIndex = 6;
-            checkBox3.Text = "Shift Quirk";
-            checkBox3.UseVisualStyleBackColor = true;
-            checkBox3.CheckedChanged += checkBox3_CheckedChanged;
+            shiftQuirkCheckBox.AutoSize = true;
+            shiftQuirkCheckBox.Location = new Point(762, 314);
+            shiftQuirkCheckBox.Name = "shiftQuirkCheckBox";
+            shiftQuirkCheckBox.Size = new Size(82, 19);
+            shiftQuirkCheckBox.TabIndex = 6;
+            shiftQuirkCheckBox.Text = "Shift Quirk";
+            shiftQuirkCheckBox.UseVisualStyleBackColor = true;
+            shiftQuirkCheckBox.CheckedChanged += checkBox3_CheckedChanged;
             // 
-            // checkBox4
+            // jumpQuirkCheckBox
             // 
-            checkBox4.AutoSize = true;
-            checkBox4.Location = new Point(659, 314);
-            checkBox4.Name = "checkBox4";
-            checkBox4.Size = new Size(87, 19);
-            checkBox4.TabIndex = 7;
-            checkBox4.Text = "Jump Quirk";
-            checkBox4.UseVisualStyleBackColor = true;
-            checkBox4.CheckedChanged += checkBox4_CheckedChanged;
+            jumpQuirkCheckBox.AutoSize = true;
+            jumpQuirkCheckBox.Location = new Point(659, 314);
+            jumpQuirkCheckBox.Name = "jumpQuirkCheckBox";
+            jumpQuirkCheckBox.Size = new Size(87, 19);
+            jumpQuirkCheckBox.TabIndex = 7;
+            jumpQuirkCheckBox.Text = "Jump Quirk";
+            jumpQuirkCheckBox.UseVisualStyleBackColor = true;
+            jumpQuirkCheckBox.CheckedChanged += checkBox4_CheckedChanged;
             // 
-            // checkBox5
+            // vfQuirkCheckBox
             // 
-            checkBox5.AutoSize = true;
-            checkBox5.Location = new Point(869, 314);
-            checkBox5.Name = "checkBox5";
-            checkBox5.Size = new Size(71, 19);
-            checkBox5.TabIndex = 8;
-            checkBox5.Text = "VF Quirk";
-            checkBox5.UseVisualStyleBackColor = true;
-            checkBox5.CheckedChanged += checkBox5_CheckedChanged;
+            vfQuirkCheckBox.AutoSize = true;
+            vfQuirkCheckBox.Location = new Point(869, 314);
+            vfQuirkCheckBox.Name = "vfQuirkCheckBox";
+            vfQuirkCheckBox.Size = new Size(71, 19);
+            vfQuirkCheckBox.TabIndex = 8;
+            vfQuirkCheckBox.Text = "VF Quirk";
+            vfQuirkCheckBox.UseVisualStyleBackColor = true;
+            vfQuirkCheckBox.CheckedChanged += checkBox5_CheckedChanged;
             // 
-            // checkBox6
+            // memQuirkCheckBox
             // 
-            checkBox6.AutoSize = true;
-            checkBox6.Location = new Point(969, 314);
-            checkBox6.Name = "checkBox6";
-            checkBox6.Size = new Size(86, 19);
-            checkBox6.TabIndex = 9;
-            checkBox6.Text = "Mem Quirk";
-            checkBox6.UseVisualStyleBackColor = true;
-            checkBox6.CheckedChanged += checkBox6_CheckedChanged;
+            memQuirkCheckBox.AutoSize = true;
+            memQuirkCheckBox.Location = new Point(969, 314);
+            memQuirkCheckBox.Name = "memQuirkCheckBox";
+            memQuirkCheckBox.Size = new Size(86, 19);
+            memQuirkCheckBox.TabIndex = 9;
+            memQuirkCheckBox.Text = "Mem Quirk";
+            memQuirkCheckBox.UseVisualStyleBackColor = true;
+            memQuirkCheckBox.CheckedChanged += checkBox6_CheckedChanged;
             // 
-            // button1
+            // resetButton
             // 
-            button1.Location = new Point(800, 203);
-            button1.Name = "button1";
-            button1.Size = new Size(63, 23);
-            button1.TabIndex = 10;
-            button1.Text = "Reset";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            resetButton.Location = new Point(800, 203);
+            resetButton.Name = "resetButton";
+            resetButton.Size = new Size(63, 23);
+            resetButton.TabIndex = 10;
+            resetButton.Text = "Reset";
+            resetButton.UseVisualStyleBackColor = true;
+            resetButton.Click += button1_Click;
             // 
-            // button2
+            // pauseButton
             // 
-            button2.Location = new Point(863, 203);
-            button2.Name = "button2";
-            button2.Size = new Size(63, 23);
-            button2.TabIndex = 11;
-            button2.Text = "Pause";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            pauseButton.Location = new Point(863, 203);
+            pauseButton.Name = "pauseButton";
+            pauseButton.Size = new Size(63, 23);
+            pauseButton.TabIndex = 11;
+            pauseButton.Text = "Pause";
+            pauseButton.UseVisualStyleBackColor = true;
+            pauseButton.Click += button2_Click;
             // 
-            // button3
+            // loadButton
             // 
-            button3.Location = new Point(989, 203);
-            button3.Name = "button3";
-            button3.Size = new Size(63, 23);
-            button3.TabIndex = 12;
-            button3.Text = "Load";
-            button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            loadButton.Location = new Point(989, 203);
+            loadButton.Name = "loadButton";
+            loadButton.Size = new Size(63, 23);
+            loadButton.TabIndex = 12;
+            loadButton.Text = "Load";
+            loadButton.UseVisualStyleBackColor = true;
+            loadButton.Click += button3_Click;
             // 
-            // button4
+            // stepButton
             // 
-            button4.Location = new Point(926, 203);
-            button4.Name = "button4";
-            button4.Size = new Size(63, 23);
-            button4.TabIndex = 13;
-            button4.Text = "Step";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            stepButton.Location = new Point(926, 203);
+            stepButton.Name = "stepButton";
+            stepButton.Size = new Size(63, 23);
+            stepButton.TabIndex = 13;
+            stepButton.Text = "Step";
+            stepButton.UseVisualStyleBackColor = true;
+            stepButton.Click += button4_Click;
             // 
             // label1
             // 
@@ -231,40 +231,40 @@
             label1.TabIndex = 14;
             label1.Text = "Select";
             // 
-            // comboBox1
+            // romComboBox
             // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(838, 243);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(171, 23);
-            comboBox1.TabIndex = 15;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
-            comboBox1.KeyPress += comboBox_KeyPress;
+            romComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            romComboBox.FormattingEnabled = true;
+            romComboBox.Location = new Point(838, 243);
+            romComboBox.Name = "romComboBox";
+            romComboBox.Size = new Size(171, 23);
+            romComboBox.TabIndex = 15;
+            romComboBox.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            romComboBox.KeyPress += comboBox_KeyPress;
             // 
-            // button5
+            // reloadButton
             // 
-            button5.Font = new Font("Webdings", 12F, FontStyle.Regular, GraphicsUnit.Point, 2);
-            button5.Location = new Point(1012, 242);
-            button5.Name = "button5";
-            button5.Size = new Size(31, 25);
-            button5.TabIndex = 16;
-            button5.Text = "q";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
+            reloadButton.Font = new Font("Webdings", 12F, FontStyle.Regular, GraphicsUnit.Point, 2);
+            reloadButton.Location = new Point(1012, 242);
+            reloadButton.Name = "reloadButton";
+            reloadButton.Size = new Size(31, 25);
+            reloadButton.TabIndex = 16;
+            reloadButton.Text = "q";
+            reloadButton.UseVisualStyleBackColor = true;
+            reloadButton.Click += button5_Click;
             // 
-            // trackBar1
+            // trackBar
             // 
-            trackBar1.Location = new Point(812, 275);
-            trackBar1.Maximum = 40000;
-            trackBar1.Minimum = 20000;
-            trackBar1.Name = "trackBar1";
-            trackBar1.Size = new Size(240, 45);
-            trackBar1.TabIndex = 17;
-            trackBar1.TickFrequency = 1001;
-            trackBar1.TickStyle = TickStyle.None;
-            trackBar1.Value = 20000;
-            trackBar1.ValueChanged += trackBar1_ValueChanged;
+            trackBar.Location = new Point(812, 275);
+            trackBar.Maximum = 40000;
+            trackBar.Minimum = 20000;
+            trackBar.Name = "trackBar";
+            trackBar.Size = new Size(240, 45);
+            trackBar.TabIndex = 17;
+            trackBar.TickFrequency = 1001;
+            trackBar.TickStyle = TickStyle.None;
+            trackBar.Value = 20000;
+            trackBar.ValueChanged += trackBar1_ValueChanged;
             // 
             // label2
             // 
@@ -482,23 +482,23 @@
             Controls.Add(panel2);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(button5);
-            Controls.Add(comboBox1);
+            Controls.Add(reloadButton);
+            Controls.Add(romComboBox);
             Controls.Add(label1);
-            Controls.Add(button4);
-            Controls.Add(button3);
-            Controls.Add(button2);
-            Controls.Add(button1);
-            Controls.Add(checkBox6);
-            Controls.Add(checkBox5);
-            Controls.Add(checkBox4);
-            Controls.Add(checkBox3);
-            Controls.Add(checkBox2);
-            Controls.Add(checkBox1);
-            Controls.Add(textBox2);
-            Controls.Add(textBox1);
-            Controls.Add(panel1);
-            Controls.Add(trackBar1);
+            Controls.Add(stepButton);
+            Controls.Add(loadButton);
+            Controls.Add(pauseButton);
+            Controls.Add(resetButton);
+            Controls.Add(memQuirkCheckBox);
+            Controls.Add(vfQuirkCheckBox);
+            Controls.Add(jumpQuirkCheckBox);
+            Controls.Add(shiftQuirkCheckBox);
+            Controls.Add(startInDebugModeCheckBox);
+            Controls.Add(showDebugCheckBox);
+            Controls.Add(stackTextBox);
+            Controls.Add(debugTextBox);
+            Controls.Add(videoBackPanel);
+            Controls.Add(trackBar);
             DoubleBuffered = true;
             KeyPreview = true;
             Name = "Form1";
@@ -507,9 +507,9 @@
             Shown += Form1_Shown;
             KeyDown += Form1_KeyDown;
             KeyUp += Form1_KeyUp;
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            panel1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)trackBar1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)videoPictureBox).EndInit();
+            videoBackPanel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
             panel2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -517,24 +517,24 @@
 
         #endregion
 
-        private PictureBox pictureBox1;
-        private Panel panel1;
-        private TextBox textBox1;
-        private TextBox textBox2;
-        private CheckBox checkBox1;
-        private CheckBox checkBox2;
-        private CheckBox checkBox3;
-        private CheckBox checkBox4;
-        private CheckBox checkBox5;
-        private CheckBox checkBox6;
-        private Button button1;
-        private Button button2;
-        private Button button3;
-        private Button button4;
+        private PictureBox videoPictureBox;
+        private Panel videoBackPanel;
+        private TextBox debugTextBox;
+        private TextBox stackTextBox;
+        private CheckBox showDebugCheckBox;
+        private CheckBox startInDebugModeCheckBox;
+        private CheckBox shiftQuirkCheckBox;
+        private CheckBox jumpQuirkCheckBox;
+        private CheckBox vfQuirkCheckBox;
+        private CheckBox memQuirkCheckBox;
+        private Button resetButton;
+        private Button pauseButton;
+        private Button loadButton;
+        private Button stepButton;
         private Label label1;
-        private ComboBox comboBox1;
-        private Button button5;
-        public TrackBar trackBar1;
+        private ComboBox romComboBox;
+        private Button reloadButton;
+        public TrackBar trackBar;
         private Label label2;
         private Label label3;
         private OpenFileDialog openFileDialog;

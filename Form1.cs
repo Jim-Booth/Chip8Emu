@@ -43,72 +43,22 @@ namespace Chip8Emu
             Color c = Color.White;
             if (!down)
                 c = Color.Silver;
-            switch (k)
-            {
-                case 0:
-                    label16.BackColor = c;
-                    break;
-
-                case 1:
-                    label6.BackColor = c;
-                    break;
-
-                case 2:
-                    label7.BackColor = c;
-                    break;
-
-                case 3:
-                    label8.BackColor = c;
-                    break;
-
-                case 4:
-                    label13.BackColor = c;
-                    break;
-
-                case 5:
-                    label12.BackColor = c;
-                    break;
-
-                case 6:
-                    label11.BackColor = c;
-                    break;
-
-                case 7:
-                    label21.BackColor = c;
-                    break;
-
-                case 8:
-                    label20.BackColor = c;
-                    break;
-
-                case 9:
-                    label19.BackColor = c;
-                    break;
-
-                case 10:
-                    label17.BackColor = c;
-                    break;
-
-                case 11:
-                    label15.BackColor = c;
-                    break;
-
-                case 12:
-                    label9.BackColor = c;
-                    break;
-
-                case 13:
-                    label10.BackColor = c;
-                    break;
-
-                case 14:
-                    label18.BackColor = c;
-                    break;
-
-                case 15:
-                    label14.BackColor = c;
-                    break;
-            }
+            if (k == 0) label16.BackColor = c;
+            if (k == 1) label6.BackColor = c;
+            if (k == 2) label7.BackColor = c;
+            if (k == 3) label8.BackColor = c;
+            if (k == 4) label13.BackColor = c;
+            if (k == 5) label12.BackColor = c;
+            if (k == 6) label11.BackColor = c;
+            if (k == 7) label21.BackColor = c;
+            if (k == 8) label20.BackColor = c;
+            if (k == 9) label19.BackColor = c;
+            if (k == 10) label17.BackColor = c;
+            if (k == 11) label15.BackColor = c;
+            if (k == 12) label9.BackColor = c;
+            if (k == 13) label10.BackColor = c;
+            if (k == 14) label18.BackColor = c;
+            if (k == 15) label14.BackColor = c;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -135,38 +85,22 @@ namespace Chip8Emu
 
         private uint GetKeyValue(KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.D1)
-                return 1;
-            if (e.KeyCode == Keys.D2)
-                return 2;
-            if (e.KeyCode == Keys.D3)
-                return 3;
-            if (e.KeyCode == Keys.D4)
-                return 12;
-            if (e.KeyCode == Keys.Q)
-                return 4;
-            if (e.KeyCode == Keys.W)
-                return 5;
-            if (e.KeyCode == Keys.E)
-                return 6;
-            if (e.KeyCode == Keys.R)
-                return 13;
-            if (e.KeyCode == Keys.A)
-                return 7;
-            if (e.KeyCode == Keys.S)
-                return 8;
-            if (e.KeyCode == Keys.D)
-                return 9;
-            if (e.KeyCode == Keys.F)
-                return 14;
-            if (e.KeyCode == Keys.Z)
-                return 10;
-            if (e.KeyCode == Keys.X)
-                return 0;
-            if (e.KeyCode == Keys.C)
-                return 11;
-            if (e.KeyCode == Keys.V)
-                return 15;
+            if (e.KeyCode == Keys.D1) return 1;
+            if (e.KeyCode == Keys.D2) return 2;
+            if (e.KeyCode == Keys.D3) return 3;
+            if (e.KeyCode == Keys.D4) return 12;
+            if (e.KeyCode == Keys.Q) return 4;
+            if (e.KeyCode == Keys.W) return 5;
+            if (e.KeyCode == Keys.E) return 6;
+            if (e.KeyCode == Keys.R) return 13;
+            if (e.KeyCode == Keys.A) return 7;
+            if (e.KeyCode == Keys.S) return 8;
+            if (e.KeyCode == Keys.D) return 9;
+            if (e.KeyCode == Keys.F) return 14;
+            if (e.KeyCode == Keys.Z) return 10;
+            if (e.KeyCode == Keys.X) return 0;
+            if (e.KeyCode == Keys.C) return 11;
+            if (e.KeyCode == Keys.V) return 15;
             return 99;
         }
 
@@ -175,30 +109,30 @@ namespace Chip8Emu
             Reset();
             currentLoadedROM = @"Test.ROM";
             Execute(currentLoadedROM);
-            if (!String.IsNullOrEmpty(comboBox1.Text))
-                comboBox1.Text = String.Empty;
-            button2.Text = "Pause";
+            if (!String.IsNullOrEmpty(romComboBox.Text))
+                romComboBox.Text = String.Empty;
+            pauseButton.Text = "Pause";
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             chip8!.Pause();
-            if (!checkBox1.Checked)
+            if (!showDebugCheckBox.Checked)
             {
-                textBox1.Text = "";
-                textBox2.Text = "";
+                debugTextBox.Text = "";
+                stackTextBox.Text = "";
             }
             if (chip8.DebugMode)
-                button2.Text = "Run";
+                pauseButton.Text = "Run";
             else
-                button2.Text = "Pause";
+                pauseButton.Text = "Pause";
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                comboBox1.SelectedIndex = -1;
+                romComboBox.SelectedIndex = -1;
                 Reset();
                 currentLoadedROM = openFileDialog.FileName;
                 Execute(currentLoadedROM);
@@ -217,24 +151,24 @@ namespace Chip8Emu
                 displayThread = null;
             while (chip8_thread is not null && chip8_thread!.IsAlive)
                 chip8_thread = null;
-            panel1.BackColor = Color.Red;
-            trackBar1.Value = 20000;
+            videoBackPanel.BackColor = Color.Red;
+            trackBar.Value = 20000;
         }
 
         private void Execute(string romPath)
         {
-            if (checkBox2.Checked)
-                button2.Text = "Run";
-            trackBar1.Value = 20000;
-            panel1.BackColor = Color.Black;
+            if (startInDebugModeCheckBox.Checked)
+                pauseButton.Text = "Run";
+            trackBar.Value = 20000;
+            videoBackPanel.BackColor = Color.Black;
 
             // start Chip8 in it's own thread
             chip8 = new Chip8(romPath);
-            chip8.ShiftQuirk = checkBox3.Checked;
-            chip8.VFReset = checkBox5.Checked;
-            chip8.JumpQuirk = checkBox4.Checked;
-            chip8.MemoryQuirk = checkBox6.Checked;
-            chip8.DebugMode = checkBox2.Checked;
+            chip8.ShiftQuirk = shiftQuirkCheckBox.Checked;
+            chip8.VFReset = vfQuirkCheckBox.Checked;
+            chip8.JumpQuirk = jumpQuirkCheckBox.Checked;
+            chip8.MemoryQuirk = memQuirkCheckBox.Checked;
+            chip8.DebugMode = startInDebugModeCheckBox.Checked;
             chip8_thread = new Thread(() => chip8.Start());
             chip8_thread.IsBackground = true;
             chip8_thread.Start();
@@ -257,15 +191,15 @@ namespace Chip8Emu
                     RenderScreen();
                 RenderDebugInfo();               
             }
-            panel1.BackColor = Color.Red;
+            videoBackPanel.BackColor = Color.Red;
         }
 
         private void RenderDebugInfo()
         {
-            if (checkBox1.Checked && chip8!.Running)
+            if (showDebugCheckBox.Checked && chip8!.Running)
             {
-                textBox1.Invoke((MethodInvoker)(() => textBox1.Text = String.Join(Environment.NewLine, chip8!.DebugMainInfo())));
-                textBox2.Invoke((MethodInvoker)(() => textBox2.Text = String.Join(Environment.NewLine, chip8!.DebugStackInfo())));
+                debugTextBox.Invoke((MethodInvoker)(() => debugTextBox.Text = String.Join(Environment.NewLine, chip8!.DebugMainInfo())));
+                stackTextBox.Invoke((MethodInvoker)(() => stackTextBox.Text = String.Join(Environment.NewLine, chip8!.DebugStackInfo())));
             }
         }
         private void RenderScreen()
@@ -278,22 +212,22 @@ namespace Chip8Emu
                     for (int x = 0; x < videoWidth * displayScale; x += displayScale)
                         if (video!.@byte![videoBytePointer++] != 0)
                             graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale);
-            pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = initalBitmap; });
+            videoPictureBox.Invoke((MethodInvoker)delegate { videoPictureBox.Image = initalBitmap; });
         }
 
         private void SearchForCH8Roms()
         {
             var myFiles = Directory.EnumerateFiles(Application.StartupPath, @"ROMS\*.*");
             foreach (var file in myFiles)
-                comboBox1.Items.Add(Path.GetFileName(file));
+                romComboBox.Items.Add(Path.GetFileName(file));
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             Reset();
-            if (comboBox1.SelectedIndex > -1)
-                if (!String.IsNullOrEmpty(comboBox1.SelectedItem!.ToString()))
-                    Execute(@"ROMS\" + comboBox1.Text);
+            if (romComboBox.SelectedIndex > -1)
+                if (!String.IsNullOrEmpty(romComboBox.SelectedItem!.ToString()))
+                    Execute(@"ROMS\" + romComboBox.Text);
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -304,27 +238,27 @@ namespace Chip8Emu
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
         {
-            chip8!.JumpQuirk = checkBox4.Checked;
+            chip8!.JumpQuirk = jumpQuirkCheckBox.Checked;
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-            chip8!.ShiftQuirk = checkBox3.Checked;
+            chip8!.ShiftQuirk = shiftQuirkCheckBox.Checked;
         }
 
         private void checkBox5_CheckedChanged(object sender, EventArgs e)
         {
-            chip8!.VFReset = checkBox5.Checked;
+            chip8!.VFReset = vfQuirkCheckBox.Checked;
         }
 
         private void checkBox6_CheckedChanged(object sender, EventArgs e)
         {
-            chip8!.MemoryQuirk = checkBox6.Checked;
+            chip8!.MemoryQuirk = memQuirkCheckBox.Checked;
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            int val = trackBar1.Maximum - trackBar1.Value;
+            int val = trackBar.Maximum - trackBar.Value;
             if (chip8 != null)
                 if (val <= 20000)
                     chip8.SimTick = val;
@@ -340,7 +274,7 @@ namespace Chip8Emu
 
         private void button5_Click(object sender, EventArgs e)
         {
-            if (comboBox1.Text.Length != 0)
+            if (romComboBox.Text.Length != 0)
                 comboBox1_SelectedIndexChanged(this, e);
             else
                 Form1_Shown(sender, e);
