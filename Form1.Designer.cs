@@ -284,7 +284,6 @@
             label3.Size = new Size(36, 15);
             label3.TabIndex = 19;
             label3.Text = "faster";
-            label3.Click += label3_Click;
             // 
             // openFileDialog
             // 

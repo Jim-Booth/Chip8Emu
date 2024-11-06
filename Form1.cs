@@ -10,9 +10,15 @@ namespace Chip8Emu
     public partial class Form1 : Form
     {
         private Chip8? chip8;
-
         private Thread? chip8_thread;
         private Thread? displayThread;
+        private FIXED_BYTE_ARRAY? video;
+        private readonly int displayScale = 10;
+        private int videoWidth = 0;
+        private int videoHeight = 0;
+        private readonly SolidBrush foreBrush = new SolidBrush(Color.LimeGreen);
+        private readonly Color backColor = Color.FromArgb(0, 16, 0);
+        private string currentLoadedROM = @"Test.ROM";
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public class FIXED_BYTE_ARRAY
@@ -20,20 +26,6 @@ namespace Chip8Emu
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 320)]
             public byte[]? @byte;
         }
-
-        private FIXED_BYTE_ARRAY? video;
-
-        private int displayScale = 10;
-
-        private int videoWidth = 0;
-
-        private int videoHeight = 0;
-
-        private SolidBrush foreBrush = new SolidBrush(Color.LimeGreen);
-
-        private Color backColor = Color.FromArgb(0, 16, 0);
-
-        private string currentLoadedROM = @"Test.ROM";
 
         public Form1()
         {
@@ -307,8 +299,7 @@ namespace Chip8Emu
         private void button4_Click(object sender, EventArgs e)
         {
             chip8!.Step();
-            textBox1.Invoke((MethodInvoker)(() => textBox1.Text = String.Join(Environment.NewLine, chip8.DebugMainInfo())));
-            textBox2.Invoke((MethodInvoker)(() => textBox2.Text = String.Join(Environment.NewLine, chip8.DebugStackInfo())));
+            RenderDebugInfo();
         }
 
         private void checkBox4_CheckedChanged(object sender, EventArgs e)
@@ -353,10 +344,6 @@ namespace Chip8Emu
                 comboBox1_SelectedIndexChanged(this, e);
             else
                 Form1_Shown(sender, e);
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
         }
     }
 }

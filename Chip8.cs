@@ -97,13 +97,13 @@ namespace Chip8Emulator
             set { video = value; }
         }
 
-        private Random RND = new(DateTime.Now.Millisecond);
+        private readonly Random RND = new(DateTime.Now.Millisecond);
         private FIXED_BYTE_ARRAY? Registers { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[16] };
         private FIXED_BYTE_ARRAY? Memory { get; } = new FIXED_BYTE_ARRAY { @byte = new byte[4095] };
         private uint I;
         private uint PC;
         private string CurrentOpcodeDescription = String.Empty;
-        private uint[] STACK = new uint[16];
+        private readonly uint[] STACK = new uint[16];
         private byte SP = 0;// stack pointer
         private byte ST = 0;// sound timer
         private byte DT = 0;// delay timer
