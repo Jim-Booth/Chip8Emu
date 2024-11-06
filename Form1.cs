@@ -17,8 +17,8 @@ namespace Chip8Emu
         private int videoWidth = 0;
         private int videoHeight = 0;
         private readonly SolidBrush foreBrush = new SolidBrush(Color.LimeGreen);
-        private readonly Color backColor = Color.FromArgb(0, 16, 0);
         private string currentLoadedROM = @"Test.ROM";
+        private object lockObject = new object();
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public class FIXED_BYTE_ARRAY
@@ -160,25 +160,30 @@ namespace Chip8Emu
             if (startInDebugModeCheckBox.Checked)
                 pauseButton.Text = "Run";
             trackBar.Value = 20000;
-            videoBackPanel.BackColor = Color.Black;
 
             // start Chip8 in it's own thread
-            chip8 = new Chip8(romPath);
-            chip8.ShiftQuirk = shiftQuirkCheckBox.Checked;
-            chip8.VFReset = vfQuirkCheckBox.Checked;
-            chip8.JumpQuirk = jumpQuirkCheckBox.Checked;
-            chip8.MemoryQuirk = memQuirkCheckBox.Checked;
-            chip8.DebugMode = startInDebugModeCheckBox.Checked;
-            chip8_thread = new Thread(() => chip8.Start());
-            chip8_thread.IsBackground = true;
+            chip8 = new Chip8
+            {
+                ShiftQuirk = shiftQuirkCheckBox.Checked,
+                VFReset = vfQuirkCheckBox.Checked,
+                JumpQuirk = jumpQuirkCheckBox.Checked,
+                MemoryQuirk = memQuirkCheckBox.Checked,
+                DebugMode = startInDebugModeCheckBox.Checked
+            };
+            chip8_thread = new Thread(() => chip8.Start(romPath))
+            {
+                IsBackground = true
+            };
             chip8_thread.Start();
 
             // create and update form display in it's own thread
             videoWidth = chip8.VideoWidth;
             videoHeight = chip8.VideoHeight;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[videoWidth * videoHeight] };
-            displayThread = new Thread(() => DisplayThreadLoop());
-            displayThread.IsBackground = true;
+            displayThread = new Thread(() => DisplayThreadLoop())
+            {
+                IsBackground = true
+            };
             displayThread.Start();
         }
 
@@ -204,14 +209,14 @@ namespace Chip8Emu
         }
         private void RenderScreen()
         {
-            video!.@byte = chip8!.Video.@byte;
+            video!.@byte = chip8!.Video!.@byte;
             Bitmap initalBitmap = new(videoWidth * displayScale, videoHeight * displayScale);
             int videoBytePointer = 0;
             using (Graphics graphics = Graphics.FromImage(initalBitmap))
                 for (int y = 0; y < videoHeight * displayScale; y += displayScale)
                     for (int x = 0; x < videoWidth * displayScale; x += displayScale)
                         if (video!.@byte![videoBytePointer++] != 0)
-                            graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale);
+                            try { graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale); } catch { }
             videoPictureBox.Invoke((MethodInvoker)delegate { videoPictureBox.Image = initalBitmap; });
         }
 

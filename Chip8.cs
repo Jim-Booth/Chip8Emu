@@ -89,9 +89,9 @@ namespace Chip8Emulator
             public byte[]? @byte;
         }
 
-        private FIXED_BYTE_ARRAY video;
+        private FIXED_BYTE_ARRAY? video;
 
-        public FIXED_BYTE_ARRAY Video
+        public FIXED_BYTE_ARRAY? Video
         {
             get { return video; }
             set { video = value; }
@@ -143,15 +143,6 @@ namespace Chip8Emulator
 	        0xF0, 0x80, 0xF0, 0x80, 0x80  // F
         };
 
-        public Chip8(string filePathROM)
-        {
-            PC = START_ADDRESS;
-            video = new FIXED_BYTE_ARRAY { @byte = new byte[VIDEO_WIDTH * VIDEO_HEIGHT] };
-            for (uint i = 0; i < FONTSET_SIZE; i++)
-                Memory!.@byte![i] = FONTS[i];
-            LoadROM(filePathROM);
-        }
-
         private void LoadROM(string filePath)
         {
             using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
@@ -165,8 +156,13 @@ namespace Chip8Emulator
                 throw new Exception("Memory Overflow");
         }
 
-        public void Start()
+        public void Start(string filePathROM)
         {
+            PC = START_ADDRESS;
+            video = new FIXED_BYTE_ARRAY { @byte = new byte[VIDEO_WIDTH * VIDEO_HEIGHT] };
+            for (uint i = 0; i < FONTSET_SIZE; i++)
+                Memory!.@byte![i] = FONTS[i];
+            LoadROM(filePathROM);
             running = true;
             int beat = 0;
             double timerCounter = (DateTime.Now - DateTime.MinValue).TotalMilliseconds;
