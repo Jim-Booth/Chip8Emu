@@ -221,18 +221,10 @@ namespace Chip8Emu
 
         private void Reset()
         {
-            if (chip8 is not null)
-            {
-                chip8!.Running = false;
-                chip8.Stop();
-                while (chip8.Running)
-                {
-                    chip8.Stop();
-                    chip8_thread = null;
-                }
-                while (chip8_thread is not null && chip8_thread!.IsAlive)
-                    chip8_thread = null;
-            }
+            while (displayThread is not null && displayThread!.IsAlive)
+                displayThread = null;
+            while (chip8_thread is not null && chip8_thread!.IsAlive)
+                chip8_thread = null;
             panel1.BackColor = Color.Red;
             trackBar1.Value = 20000;
         }
@@ -269,7 +261,7 @@ namespace Chip8Emu
             while (!chip8!.Running) { }
             while (chip8.Running)
             {
-                if (chip8!.DisplayUpdated)
+                if (chip8.DisplayUpdated)
                     RenderScreen();
                 RenderDebugInfo();               
             }
@@ -287,14 +279,14 @@ namespace Chip8Emu
         private void RenderScreen()
         {
             video!.@byte = chip8!.Video.@byte;
-            Bitmap outputBitmap = new(videoWidth * displayScale, videoHeight * displayScale);
+            Bitmap initalBitmap = new(videoWidth * displayScale, videoHeight * displayScale);
             int videoBytePointer = 0;
-            using (Graphics graphics = Graphics.FromImage(outputBitmap))
+            using (Graphics graphics = Graphics.FromImage(initalBitmap))
                 for (int y = 0; y < videoHeight * displayScale; y += displayScale)
                     for (int x = 0; x < videoWidth * displayScale; x += displayScale)
                         if (video!.@byte![videoBytePointer++] != 0)
                             graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale);
-            pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = outputBitmap; });
+            pictureBox1.Invoke((MethodInvoker)delegate { pictureBox1.Image = initalBitmap; });
         }
 
         private void SearchForCH8Roms()
