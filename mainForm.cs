@@ -173,8 +173,8 @@ namespace Chip8Emu
             chip8_thread.Start();
 
             // create and update form display in it's own thread
-            videoWidth = chip8.VideoWidth;
-            videoHeight = chip8.VideoHeight;
+            videoWidth = Chip8.VideoWidth;
+            videoHeight = Chip8.VideoHeight;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[videoWidth * videoHeight] };
             debugThread = new Thread(() => DebugThreadLoop())
             {
