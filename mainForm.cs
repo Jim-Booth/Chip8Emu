@@ -176,6 +176,7 @@ namespace Chip8Emu
             videoWidth = Chip8.VideoWidth;
             videoHeight = Chip8.VideoHeight;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[videoWidth * videoHeight] };
+           
             debugThread = new Thread(() => DebugThreadLoop())
             {
                 IsBackground = true
@@ -190,7 +191,6 @@ namespace Chip8Emu
             {
                 RenderDebugInfo();               
             }
-            videoBackPanel.BackColor = Color.Red;
         }
 
         private void RenderDebugInfo()
@@ -200,6 +200,7 @@ namespace Chip8Emu
                 debugTextBox.Invoke((MethodInvoker)(() => debugTextBox.Text = String.Join(Environment.NewLine, chip8!.DebugMainInfo())));
                 stackTextBox.Invoke((MethodInvoker)(() => stackTextBox.Text = String.Join(Environment.NewLine, chip8!.DebugStackInfo())));
             }
+            Thread.Sleep(16);
         }
 
         public void RenderScreen()
@@ -213,7 +214,7 @@ namespace Chip8Emu
                 string row = String.Empty;
                 for (int x = 0; x < 64; x++)
                 {
-                    if (video.@byte[cnt] != 0)
+                    if (video.@byte![cnt] != 0)
                         initalBitmap.SetPixel(x, y, Color.LimeGreen);
                     else
                         initalBitmap.SetPixel(x, y, Color.Black);

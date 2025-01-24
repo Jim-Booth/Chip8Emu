@@ -149,29 +149,37 @@ namespace Chip8Emu
 
         public Chip8()
         {
-
             PC = START_ADDRESS;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[VIDEO_WIDTH * VIDEO_HEIGHT] };
             for (uint i = 0; i < FONTSET_SIZE; i++)
                 memory.@byte![i] = FONTS[i];
         }
 
-        private void LoadROM(string filePath)
+        private bool LoadROM(string filePath)
         {
-            using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
-            BinaryReader br = new(fs);
-            long progSize = new FileInfo(filePath).Length;
-            byte[] rom = br.ReadBytes((int)progSize);
-            if (rom.Length <= memory.@byte!.Length)
-                for (long i = 0; i < rom.Length; i++)
-                    memory.@byte![START_ADDRESS + i] = rom[i];
-            else
-                throw new Exception("Memory Overflow");
+            try
+            {
+                using FileStream fs = new(filePath, FileMode.Open, FileAccess.Read);
+                BinaryReader br = new(fs);
+                long progSize = new FileInfo(filePath).Length;
+                byte[] rom = br.ReadBytes((int)progSize);
+                if (rom.Length <= memory.@byte!.Length)
+                    for (long i = 0; i < rom.Length; i++)
+                        memory.@byte![START_ADDRESS + i] = rom[i];
+                else
+                    throw new Exception("Memory Overflow");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void Start(string filePathROM)
         {
-            LoadROM(filePathROM);
+            if (!LoadROM(filePathROM))
+                throw new Exception("Failed to load ROM");
 
             running = true;
             int beat = 0;
@@ -210,13 +218,14 @@ namespace Chip8Emu
                 }
 
                 UpdateTimers();
+
                 UpdateDisplay();
 
                 beat++;
                 bool awaitKey = (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == 'A');
                 if (p != PC || awaitKey)
                     beat = 0;
-                if (beat == 100)
+                if (beat == 10)
                     running = false;
 
             }
