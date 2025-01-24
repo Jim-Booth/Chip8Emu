@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 
 namespace Chip8Emu
 {
@@ -95,6 +96,7 @@ namespace Chip8Emu
         private readonly mainForm form = Application.OpenForms.OfType<mainForm>().FirstOrDefault()!;
         private string CurrentOpcodeDescription = String.Empty;
         private readonly uint[] STACK = new uint[16];
+        private bool displayUpdated = false;
 
         private readonly byte[] FONTS =
         [
@@ -144,6 +146,7 @@ namespace Chip8Emu
             info.Add("ST = " + ST.ToString("X"));
             info.Add("SP = " + SP.ToString("X"));
             info.Add("I = " + I.ToString("X"));
+            info.Add("C/F = " + frameSize);
             return info;
         }
 
@@ -202,31 +205,34 @@ namespace Chip8Emu
                         cycles++;
 
                         uint opcode = ((uint)memory.@byte![PC] << 8) | memory.@byte![PC + 1];
-                        opHex = opcode.ToString("X4");
                         p = PC;
 
                         // Execute current instruction
                         if (!debugMode)
-                            ExecuteOpcode(opcode, opHex);
+                            ExecuteOpcode(opcode);
                         else
                         {
                             while (!step) { }
-                            ExecuteOpcode(opcode, opHex);
+                            ExecuteOpcode(opcode);
                         }
+
+                        beat++;
+                        string op = opcode.ToString("X4");
+                        bool awaitKey = (op[0] == 'F' && op[2] == '0' && op[3] == 'A');
+                        if (p != PC || awaitKey)
+                            beat = 0;
+                        if (beat == 10)
+                            running = false;
                     }
                     currentTime = (DateTime.Now - DateTime.MinValue).TotalMilliseconds; ;
+
+
                 }
 
                 UpdateTimers();
 
                 UpdateDisplay();
 
-                beat++;
-                bool awaitKey = (opHex[0] == 'F' && opHex[2] == '0' && opHex[3] == 'A');
-                if (p != PC || awaitKey)
-                    beat = 0;
-                if (beat == 10)
-                    running = false;
 
             }
             running = false;
@@ -248,10 +254,10 @@ namespace Chip8Emu
             running = false;
         }
 
-        public void ExecuteOpcode(uint opcode, string opHex)
+        public void ExecuteOpcode(uint opcode)
         {
             PC += 2;
-            CallOpcode(opcode, opHex);
+            CallOpcode(opcode);
 
             if (debugMode)
             {
@@ -260,8 +266,9 @@ namespace Chip8Emu
             }
         }
 
-        private void CallOpcode(uint opcode, string opHex)
+        private void CallOpcode(uint opcode)
         {
+            string opHex = opcode.ToString("X4");
             CurrentOpcodeDescription = opHex + "  ";
             if (opHex == "00E0") { OP_00E0(opcode); return; }
             if (opHex == "00EE") { OP_00EE(opcode); return; }
@@ -324,7 +331,9 @@ namespace Chip8Emu
 
         private void UpdateDisplay()
         {
-            Task.Run(() => { form.RenderScreen(); });
+            if (displayUpdated)
+                Task.Run(() => { form.RenderScreen(); });
+            displayUpdated = false;
         }
 
         private void OP_00E0(uint opcode)
@@ -559,6 +568,7 @@ namespace Chip8Emu
                     }
                 }
             }
+            displayUpdated = true;
             CurrentOpcodeDescription += " -  DRW   V" + Vx.ToString("X") + ", V" + Vy.ToString("X") + ", " + height;
         }
 
