@@ -1,24 +1,20 @@
-using Chip8Emulator;
-using System.Diagnostics;
+using Chip8Emu;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Windows.Forms;
 
 namespace Chip8Emu
 {
-    public partial class Form1 : Form
+    public partial class mainForm : Form
     {
         private Chip8? chip8;
         private Thread? chip8_thread;
-        private Thread? displayThread;
+        private Thread? debugThread;
         private FIXED_BYTE_ARRAY? video;
-        private readonly int displayScale = 10;
         private int videoWidth = 0;
         private int videoHeight = 0;
-        private readonly SolidBrush foreBrush = new SolidBrush(Color.LimeGreen);
         private string currentLoadedROM = @"Test.ROM";
-        private object lockObject = new object();
+        private object lockObject = new();
 
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public class FIXED_BYTE_ARRAY
@@ -27,7 +23,7 @@ namespace Chip8Emu
             public byte[]? @byte;
         }
 
-        public Form1()
+        public mainForm()
         {
             InitializeComponent();
             SearchForCH8Roms();
@@ -147,19 +143,19 @@ namespace Chip8Emu
 
         private void Reset()
         {
-            while (displayThread is not null && displayThread!.IsAlive)
-                displayThread = null;
+            while (debugThread is not null && debugThread!.IsAlive)
+                debugThread = null;
             while (chip8_thread is not null && chip8_thread!.IsAlive)
                 chip8_thread = null;
             videoBackPanel.BackColor = Color.Red;
-            trackBar.Value = 20000;
+            trackBar.Value = 10;
         }
 
         private void Execute(string romPath)
         {
             if (startInDebugModeCheckBox.Checked)
                 pauseButton.Text = "Run";
-            trackBar.Value = 20000;
+            trackBar.Value = 10;
 
             // start Chip8 in it's own thread
             chip8 = new Chip8
@@ -180,20 +176,18 @@ namespace Chip8Emu
             videoWidth = chip8.VideoWidth;
             videoHeight = chip8.VideoHeight;
             video = new FIXED_BYTE_ARRAY { @byte = new byte[videoWidth * videoHeight] };
-            displayThread = new Thread(() => DisplayThreadLoop())
+            debugThread = new Thread(() => DebugThreadLoop())
             {
                 IsBackground = true
             };
-            displayThread.Start();
+            debugThread.Start();
         }
 
-        private void DisplayThreadLoop()
+        private void DebugThreadLoop()
         {
             while (!chip8!.Running) { }
             while (chip8.Running)
             {
-                if (chip8.DisplayUpdated)
-                    RenderScreen();
                 RenderDebugInfo();               
             }
             videoBackPanel.BackColor = Color.Red;
@@ -207,17 +201,40 @@ namespace Chip8Emu
                 stackTextBox.Invoke((MethodInvoker)(() => stackTextBox.Text = String.Join(Environment.NewLine, chip8!.DebugStackInfo())));
             }
         }
-        private void RenderScreen()
+
+        public void RenderScreen()
         {
-            video!.@byte = chip8!.Video!.@byte;
-            Bitmap initalBitmap = new(videoWidth * displayScale, videoHeight * displayScale);
-            int videoBytePointer = 0;
-            using (Graphics graphics = Graphics.FromImage(initalBitmap))
-                for (int y = 0; y < videoHeight * displayScale; y += displayScale)
-                    for (int x = 0; x < videoWidth * displayScale; x += displayScale)
-                        if (video!.@byte![videoBytePointer++] != 0)
-                            try { graphics.FillRectangle(foreBrush, x, y, displayScale, displayScale); } catch { }
-            videoPictureBox.Invoke((MethodInvoker)delegate { videoPictureBox.Image = initalBitmap; });
+            Bitmap initalBitmap = new(64, 32);
+            video = new FIXED_BYTE_ARRAY { @byte = new byte[64 * 32] };
+            video.@byte = chip8!.Video.@byte;
+            int cnt = 0;
+            for (int y = 0; y < 32; y++)
+            {
+                string row = String.Empty;
+                for (int x = 0; x < 64; x++)
+                {
+                    if (video.@byte[cnt] != 0)
+                        initalBitmap.SetPixel(x, y, Color.LimeGreen);
+                    else
+                        initalBitmap.SetPixel(x, y, Color.Black);
+                    cnt++;
+                }
+            }
+            Rectangle outputContainerRect = new(0, 0, 640, 320);
+            Bitmap outputBitmap = new(640, 320);
+            outputBitmap.SetResolution(initalBitmap.HorizontalResolution, initalBitmap.VerticalResolution);
+            using (Graphics graphics = Graphics.FromImage(outputBitmap))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                using ImageAttributes wrapMode = new();
+                wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                graphics.DrawImage(initalBitmap, outputContainerRect, 0, 0, initalBitmap.Width, initalBitmap.Height, GraphicsUnit.Pixel, wrapMode);
+            }
+            videoPictureBox.Invoke((MethodInvoker)delegate { videoPictureBox.Image = outputBitmap; });
         }
 
         private void SearchForCH8Roms()
@@ -261,17 +278,9 @@ namespace Chip8Emu
             chip8!.MemoryQuirk = memQuirkCheckBox.Checked;
         }
 
-        private void trackBar1_ValueChanged(object sender, EventArgs e)
+        private void trackBar_ValueChanged(object sender, EventArgs e)
         {
-            int val = trackBar.Maximum - trackBar.Value;
-            if (chip8 != null)
-                if (val <= 20000)
-                    chip8.SimTick = val;
-                else
-                {
-                    var x = (val - 20000) * 50;
-                    chip8.SimTick = x;
-                }
+            chip8!.FrameSize = trackBar.Value;
         }
 
         private void comboBox_KeyPress(object sender, KeyPressEventArgs e)

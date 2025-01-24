@@ -1,6 +1,6 @@
 ﻿using System.Media;
 
-namespace Chip8Emulator
+namespace Chip8Emu
 {
     internal static class Sound
     {

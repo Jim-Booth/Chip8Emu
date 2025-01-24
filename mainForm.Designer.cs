@@ -1,6 +1,6 @@
 ﻿namespace Chip8Emu
 {
-    partial class Form1
+    partial class mainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -45,9 +45,6 @@
             label1 = new Label();
             romComboBox = new ComboBox();
             reloadButton = new Button();
-            trackBar = new TrackBar();
-            label2 = new Label();
-            label3 = new Label();
             openFileDialog = new OpenFileDialog();
             label6 = new Label();
             label7 = new Label();
@@ -66,10 +63,14 @@
             label20 = new Label();
             label21 = new Label();
             panel2 = new Panel();
+            label3 = new Label();
+            label2 = new Label();
+            trackBar = new TrackBar();
+            label4 = new Label();
             ((System.ComponentModel.ISupportInitialize)videoPictureBox).BeginInit();
             videoBackPanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)trackBar).BeginInit();
             SuspendLayout();
             // 
             // videoPictureBox
@@ -225,7 +226,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(797, 247);
+            label1.Location = new Point(798, 239);
             label1.Name = "label1";
             label1.Size = new Size(38, 15);
             label1.TabIndex = 14;
@@ -235,9 +236,9 @@
             // 
             romComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
             romComboBox.FormattingEnabled = true;
-            romComboBox.Location = new Point(838, 243);
+            romComboBox.Location = new Point(839, 235);
             romComboBox.Name = "romComboBox";
-            romComboBox.Size = new Size(171, 23);
+            romComboBox.Size = new Size(179, 23);
             romComboBox.TabIndex = 15;
             romComboBox.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             romComboBox.KeyPress += comboBox_KeyPress;
@@ -245,45 +246,13 @@
             // reloadButton
             // 
             reloadButton.Font = new Font("Webdings", 12F, FontStyle.Regular, GraphicsUnit.Point, 2);
-            reloadButton.Location = new Point(1012, 242);
+            reloadButton.Location = new Point(1021, 234);
             reloadButton.Name = "reloadButton";
             reloadButton.Size = new Size(31, 25);
             reloadButton.TabIndex = 16;
             reloadButton.Text = "q";
             reloadButton.UseVisualStyleBackColor = true;
             reloadButton.Click += button5_Click;
-            // 
-            // trackBar
-            // 
-            trackBar.Location = new Point(812, 275);
-            trackBar.Maximum = 40000;
-            trackBar.Minimum = 20000;
-            trackBar.Name = "trackBar";
-            trackBar.Size = new Size(240, 45);
-            trackBar.TabIndex = 17;
-            trackBar.TickFrequency = 1001;
-            trackBar.TickStyle = TickStyle.None;
-            trackBar.Value = 20000;
-            trackBar.ValueChanged += trackBar1_ValueChanged;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.BackColor = Color.Transparent;
-            label2.Location = new Point(816, 296);
-            label2.Name = "label2";
-            label2.Size = new Size(45, 15);
-            label2.TabIndex = 18;
-            label2.Text = "normal";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(1013, 296);
-            label3.Name = "label3";
-            label3.Size = new Size(36, 15);
-            label3.TabIndex = 19;
-            label3.Text = "faster";
             // 
             // openFileDialog
             // 
@@ -474,11 +443,56 @@
             panel2.Size = new Size(132, 132);
             panel2.TabIndex = 38;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(1018, 268);
+            label3.Name = "label3";
+            label3.Size = new Size(31, 15);
+            label3.TabIndex = 19;
+            label3.Text = "1000";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(812, 269);
+            label2.Name = "label2";
+            label2.Size = new Size(19, 15);
+            label2.TabIndex = 18;
+            label2.Text = "10";
+            // 
+            // trackBar
+            // 
+            trackBar.LargeChange = 10;
+            trackBar.Location = new Point(808, 279);
+            trackBar.Maximum = 1000;
+            trackBar.Minimum = 10;
+            trackBar.Name = "trackBar";
+            trackBar.Size = new Size(240, 45);
+            trackBar.SmallChange = 10;
+            trackBar.TabIndex = 17;
+            trackBar.TickFrequency = 100;
+            trackBar.TickStyle = TickStyle.TopLeft;
+            trackBar.Value = 10;
+            trackBar.ValueChanged += trackBar_ValueChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.BackColor = Color.Transparent;
+            label4.Location = new Point(893, 271);
+            label4.Name = "label4";
+            label4.Size = new Size(75, 15);
+            label4.TabIndex = 39;
+            label4.Text = "cycles/frame";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1056, 336);
+            Controls.Add(label4);
             Controls.Add(panel2);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -509,8 +523,8 @@
             KeyUp += Form1_KeyUp;
             ((System.ComponentModel.ISupportInitialize)videoPictureBox).EndInit();
             videoBackPanel.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
             panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)trackBar).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -534,9 +548,6 @@
         private Label label1;
         private ComboBox romComboBox;
         private Button reloadButton;
-        public TrackBar trackBar;
-        private Label label2;
-        private Label label3;
         private OpenFileDialog openFileDialog;
         private Label label6;
         private Label label7;
@@ -555,5 +566,9 @@
         private Label label20;
         private Label label21;
         private Panel panel2;
+        private Label label3;
+        private Label label2;
+        public TrackBar trackBar;
+        private Label label4;
     }
 }
