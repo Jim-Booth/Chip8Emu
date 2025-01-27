@@ -66,8 +66,6 @@ namespace Chip8Emu
             get { return VIDEO_HEIGHT; }
         }
 
-        private bool step = true;
-
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public class FIXED_BYTE_ARRAY
         {
@@ -80,6 +78,16 @@ namespace Chip8Emu
         {
             get { return video; }
             set { video = value; }
+        }
+
+        public uint KeyDown 
+        { 
+            set { keypad.@byte![value] = 1; } 
+        }
+
+        public uint KeyUp 
+        { 
+            set { keypad.@byte![value] = 0; } 
         }
 
         private uint I;
@@ -97,6 +105,8 @@ namespace Chip8Emu
         private string CurrentOpcodeDescription = String.Empty;
         private readonly uint[] STACK = new uint[16];
         private bool displayUpdated = false;
+        private bool step = true;
+
 
         private readonly byte[] FONTS =
         [
@@ -186,8 +196,8 @@ namespace Chip8Emu
 
             running = true;
             int beat = 0;
+
             uint p = PC;
-            string opHex = String.Empty;
 
             // Main run loop
             while (running)
@@ -212,7 +222,7 @@ namespace Chip8Emu
                             ExecuteOpcode(opcode);
                         else
                         {
-                            while (!step) { }
+                            while (!step && running) { }
                             ExecuteOpcode(opcode);
                         }
 
@@ -225,15 +235,9 @@ namespace Chip8Emu
                             running = false;
                     }
                     currentTime = (DateTime.Now - DateTime.MinValue).TotalMilliseconds; ;
-
-
                 }
-
                 UpdateTimers();
-
                 UpdateDisplay();
-
-
             }
             running = false;
         }
@@ -262,7 +266,7 @@ namespace Chip8Emu
             if (debugMode)
             {
                 step = false;
-                while (!step) { }
+                while (!step & running) { }
             }
         }
 
@@ -611,22 +615,6 @@ namespace Chip8Emu
             if (!hit)
                 PC -= 2;
             CurrentOpcodeDescription += " -  LD    V" + Vx.ToString("X");
-        }
-
-        public uint KeyDown
-        {
-            set
-            {
-                keypad.@byte![value] = 1;
-            }
-        }
-
-        public uint KeyUp
-        {
-            set
-            {
-                keypad.@byte![value] = 0;
-            }
         }
 
         private void OP_Fx15(uint opcode)
