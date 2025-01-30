@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using Chip8Emu;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 
 namespace Chip8Emu
@@ -335,9 +336,7 @@ namespace Chip8Emu
 
         private void UpdateDisplay()
         {
-            if (displayUpdated)
-                Task.Run(() => { form.RenderScreen(); });
-            displayUpdated = false;
+            form.RenderScreen();
         }
 
         private void OP_00E0(uint opcode)
